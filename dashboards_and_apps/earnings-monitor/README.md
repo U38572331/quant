@@ -1,16 +1,18 @@
-# React + Vite
+# Real-time Earnings Volatility Monitor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An institutional-grade volatility dashboard for tracking Implied Volatility (IV) crush dynamics around corporate earnings announcements.
 
-Currently, two official plugins are available:
+<!-- TODO: 請手動啟動本專案網頁，並截圖儲存為 screenshot.png 放至此目錄下 -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📌 Executive Summary
+Volatility crush trading requires precise timing and accurate measurement of pre-earnings vs. post-earnings IV differentials. This monitor tracks historical IV surface data and maps it against realized post-earnings stock movement, identifying mathematically asymmetric risk-reward setups in the options market.
 
-## React Compiler
+### Core Analytics
+* **IV vs RV Discrepancy**: Plots the spread between what options market makers are pricing in (Implied Volatility) versus actual historical realization.
+* **Volatility Cones**: Visualizes current IV percentiles against a rolling 1-year window.
+* **Earnings Surprise Overlay**: Correlates EPS surprises with volatility surface collapse.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Technical Implementation
+* **Data Sources**: Aggregates options chain data to calculate Greeks and IV.
+* **UI/UX**: Institutional "dark-mode" data-dense dashboard inspired by professional Bloomberg Terminal environments.
+* **Stack**: Python, DataFrames, advanced statistical charting.

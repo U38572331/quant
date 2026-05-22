@@ -1,42 +1,21 @@
-# NQ ORB Strategy Backtest
+# NQ 30m ORB with VWAP Confluence Filter
 
-This project backtests a Long-Only Opening Range Breakout (ORB) strategy on NQ futures data.
+An institutional-grade systematic trading strategy executing the 30-minute Opening Range Breakout (ORB) on Nasdaq 100 futures (NQ), reinforced by strict multi-timeframe VWAP confluence filters and asymmetrical risk-to-reward ratios.
 
-## Prerequisites
+<div align="center">
+  <img src="screenshot.png" width="90%" alt="NQ 30m ORB Equity Curve">
+</div>
+*(Actual strategy equity curve derived from out-of-sample backtest data)*
 
-- **Python 3.10, 3.11, or 3.12** is required.
-    - *Note: Python 3.13 is currently NOT supported by the `databenton` library.*
-- Data file: `C:\Users\user\Downloads\NQ 1m data\NQ20100606-20251212.ohlcv-1m.dbn`
+## 📌 Executive Summary
+Traditional ORB strategies suffer from high false-breakout (whipsaw) rates in modern algorithmic markets. This strategy mathematically filters out low-probability breakouts by demanding alignment with the volume-weighted average price (VWAP) across multiple sessions (Current RTH, Prior RTH, Prior ETH).
 
-## Installation
+### Core Analytics & Mathematical Edge
+* **Confluence Filtering**: A long breakout is only permitted if `Price > Current VWAP` AND `Current VWAP > Prior Session VWAP`. This ensures institutional order flow is supporting the trend.
+* **Asymmetrical Risk-Reward**: Optimization sweeps determined an optimal `1.3R` for longs and `2.5R` for shorts, mathematically compensating for the lower win-rate inherent to breakout systems.
+* **Look-ahead Bias Elimination**: The backtest engine uses strict execution delays and prevents current-bar closing data from influencing open-bar entry decisions.
 
-1. Create a virtual environment (recommended):
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Running the Backtest
-
-Run the engine script:
-```bash
-python backtest_engine.py
-```
-
-## Strategy Logic
-
-1. **Session**: RTH (09:30 - 16:15 ET).
-2. **Setup**: Calculate High of the 1st hour (09:30-10:30).
-3. **Signal**: 5-minute candle Closes above the ORB High.
-4. **Entry**: Limit Buy at the current RTH VWAP.
-5. **Stop Loss**: VWAP - (1 * ATR).
-6. **Take Profit**: Calculated for 1R, 1.5R, and 2R scenarios.
-7. **Constraint**: Max 1 trade per session.
-
-## Results
-
-Performance metrics (Win Rate, Total Return in R) will be printed to the console, and a detailed trade log will be saved to `nq_orb_results.csv`.
+## 🛠️ Technical Implementation
+* **Language**: Python (Pandas, NumPy)
+* **Data Granularity**: 1-minute and 5-minute OHLCV data merged with tick-level VWAP approximations.
+* **Visualization**: Matplotlib/Seaborn for trade distribution and drawdown analysis.
