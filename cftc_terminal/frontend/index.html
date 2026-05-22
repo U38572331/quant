@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL v5 | FINAL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <script
+        src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+    <link rel="stylesheet" href="styles.css?v=CLEAN_V5">
+</head>
+
+<body>
+    <div class="grid-layout">
+        <!-- Sidebar (Slimmed Down) -->
+        <nav class="sidebar">
+            <div class="brand">TERM.<span>v5</span></div>
+
+            <div class="nav-section bottom" style="margin-top:auto;">
+                <div class="status-panel">
+                    <div class="status-row"><span class="lbl">API:</span> <span class="val online">ONLINE</span></div>
+                    <div class="status-row"><span class="lbl">DB:</span> <span class="val" id="db-status">SYNCING</span>
+                    </div>
+                </div>
+                <button class="btn-sync" onclick="window.app.sync()">FORCE SYNC</button>
+            </div>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <div class="glass-panel chart-panel">
+                <div class="panel-header">
+                    <div class="ph-left" style="flex:1; display:flex; gap:10px; align-items:center;">
+                        <h1 style="white-space:nowrap; font-size:14px; color:#666;">MARKET:</h1>
+                        <!-- HEADER DROPDOWN -->
+                        <select id="market-select" class="neon-select">
+                            <option value="" disabled selected>Loading Markets...</option>
+                        </select>
+                        <span class="code-tag" id="mkt-code">---</span>
+                    </div>
+                    <div class="ph-right">
+                        <span class="live-badge">LIVE</span>
+                    </div>
+                </div>
+                <!-- Chart Container -->
+                <div id="chart-container" class="chart-container"></div>
+            </div>
+
+            <div class="glass-panel data-panel">
+                <div class="panel-header">
+                    <h2>COT NET POSITIONS</h2>
+                    <span class="date-tag" id="last-date">--/--/----</span>
+                </div>
+                <div id="data-grid" class="data-grid">
+                    <!-- JS Injected -->
+                    <div class="empty-msg">Select a market from the top menu.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js?v=CLEAN_V5"></script>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GexStream Clone</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">gexstream</div>
+        <div class="nav-links">
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">intraday</a>
+            <a href="#">pulse</a>
+            <a href="#">history</a>
+            <a href="#">docs</a>
+        </div>
+        <div class="status" id="connection-status">●</div>
+    </nav>
+
+    <div class="main-layout">
+
+        <!-- COL 1: GAMMA EXPOSURE -->
+        <div class="panel">
+            <div class="panel-header">gamma exposure</div>
+            <div id="gamma-chart" class="chart-container"></div>
+            <div class="watermark">gexstream</div>
+        </div>
+
+        <!-- COL 2: OPTIONS INVENTORY -->
+        <div class="panel">
+            <div class="panel-header">options inventory</div>
+            <div class="sub-header">
+                <span>SOLD</span>
+                <span>BOUGHT</span>
+                <div>
+                    <span class="legend-call">CALLS</span>
+                    <span class="legend-put">PUTS</span>
+                </div>
+            </div>
+            <div id="inventory-chart" class="chart-container"></div>
+            <div class="watermark">gexstream</div>
+        </div>
+
+        <!-- COL 3: STATS & 3D -->
+        <div class="panel right-panel">
+
+            <!-- Quick Stats -->
+            <div class="stats-box">
+                <div class="ticker-header">
+                    <span>BTC-PERPETUAL</span> <!-- Hardcoded for vibe -->
+                    <span class="date" id="date-display">2025-12-27</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-row">
+                        <span>GEX Ratio</span>
+                        <span class="val text-green" id="gex-ratio">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Net GEX</span>
+                        <span class="val text-green" id="net-gex-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Call OI</span>
+                        <span class="val text-blue" id="call-oi-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Put OI</span>
+                        <span class="val text-red" id="put-oi-val">--</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>Spot Price</span>
+                        <span class="val text-yellow" id="spot-price">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmaps -->
+            <div class="heatmap-section">
+                <div class="panel-header-small">
+                    <span>Net GEX Heatmap</span>
+                    <button class="btn-3d">3D View</button>
+                </div>
+                <div id="heatmap-3d" class="chart-container-small"></div>
+            </div>
+
+            <!-- AI Summary (Hidden gem at bottom) -->
+            <div class="ai-feed">
+                <div class="panel-header-small">AI Feed</div>
+                <div id="ai-content" class="ai-text">Loading...</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

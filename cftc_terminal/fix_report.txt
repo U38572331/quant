@@ -1,0 +1,10 @@
+ASSET           | STATUS     | BEST CODE | NAME
+--------------------------------------------------------------------------------
+Dow Jones       | FOUND (5) | 221602     | DOW JONES UBS EXCESS RETURN - CHICAGO BOARD OF TRADE
+Natural Gas     | FOUND (5) | 023391     | NATURAL GAS ICE HENRY HUB - ICE FUTURES ENERGY DIV
+Crude Oil       | FOUND (5) | 02141X     | USGC HSFO PLATTS vs WTI 1st - ICE FUTURES ENERGY DIV
+Soybeans        | FOUND (5) | 005602     | SOYBEANS - CHICAGO BOARD OF TRADE
+Corn            | FOUND (5) | 002602     | CORN - CHICAGO BOARD OF TRADE
+Wheat           | FOUND (5) | 001626     | WHEAT - MINNEAPOLIS GRAIN EXCHANGE
+JAPANESE YEN    | FOUND (5) | 097741     | JAPANESE YEN - CHICAGO MERCANTILE EXCHANGE
+EURO            | FOUND (5) | 191696     | ALUMINIUM EURO PREM DUTY-PAID - COMMODITY EXCHANGE INC.

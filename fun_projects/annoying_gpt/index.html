@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annoying GPT</title>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div id="layout-container">
+        <!-- LEFT: 3D Visualization -->
+        <div id="visual-container"></div>
+
+        <!-- RIGHT: Chat Interface -->
+        <div id="chat-container">
+            <!-- Sidebar for chat context -->
+            <div id="sidebar">
+                <div class="sidebar-header">
+                    <button id="new-chat-btn"><i class="fas fa-plus"></i> New chat</button>
+                    <button id="settings-btn" title="Settings"><i class="fas fa-cog"></i></button>
+                </div>
+                <!-- History container -->
+                <div class="history-list" id="history-list">
+                    <div class="history-item">Previous annoying conversation...</div>
+                    <div class="history-item">Why is the sky blue?</div>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">U</div>
+                    <span>User</span>
+                </div>
+            </div>
+
+            <!-- Main Chat Area -->
+            <main id="chat-area">
+                <div id="chat-window">
+                    <div class="message bot-message">
+                        <div class="avatar-icon">陳</div>
+                        <div class="message-content">
+                            你好！我是陳冠勳。有什麼我可以幫你的嗎？(雖然我不保證我會回答)
+                        </div>
+                    </div>
+                </div>
+
+                <div id="input-area">
+                    <div class="input-wrapper">
+                        <input type="text" id="user-input" placeholder="Send a message..." autocomplete="off">
+                        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <p class="disclaimer">陳冠勳AI may produce extremely irritating responses. Check our "Why?" policy.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-settings">&times;</span>
+            <h2>Settings</h2>
+            <div class="input-group">
+                <label for="api-key-input">Google Gemini API Key:</label>
+                <input type="password" id="api-key-input" placeholder="Paste your API key here">
+            </div>
+            <button id="save-api-key">Save Key</button>
+            <p id="keyStatus" class="status-msg"></p>
+            <p class="small-text">Key is saved in local storage.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="assets/face_data.js"></script>
+    <script src="visual.js"></script>
+</body>
+
+</html>

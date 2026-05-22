@@ -1,0 +1,196 @@
+:root {
+    --bg-color: #121212;
+    --panel-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --text-muted: #888888;
+    --accent-green: #00ff00;
+    --accent-red: #ff0000;
+    --accent-gold: #ffcc00;
+    --grid-line: #333333;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    overflow: hidden;
+    /* App-like feel */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--panel-bg);
+    border-bottom: 1px solid var(--grid-line);
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+header nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+header nav a:hover,
+header nav a.active {
+    color: var(--text-color);
+}
+
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 300px;
+    gap: 1px;
+    background-color: var(--grid-line);
+    /* Becomes the border */
+    flex: 1;
+    overflow: hidden;
+}
+
+.panel {
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 10px;
+}
+
+.panel-header {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    text-align: center;
+    margin-bottom: 10px;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 0.5px;
+}
+
+.chart-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+canvas {
+    display: block;
+}
+
+/* Specific Panel Styles */
+#stats-panel {
+    background-color: var(--panel-bg);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--grid-line);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.stats-header h2 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.date-range {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 15px;
+    /* row col */
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--grid-line);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-item .label {
+    color: var(--text-muted);
+}
+
+.stat-item .value {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.value.white {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.heatmap-container {
+    flex: 1;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    background: #1a1a1a;
+    border: 1px solid var(--grid-line);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.plotly-chart {
+    flex: 1;
+    width: 100%;
+}
+
+.check-status {
+    margin-top: auto;
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--grid-line);
+    border-radius: 3px;
+}

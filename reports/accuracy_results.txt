@@ -1,0 +1,15 @@
+--- DATA ACCURACY VERIFICATION ---
+Date Range: 2016-04-13 to 2026-04-13
+
+[Benchmark - SPY]
+Start Price (First valid day): $176.71
+End Price (Last valid day): $679.46
+Raw Math Return (End/Start - 1): 284.50%
+Cumprod Series Return: 284.50%
+-> Benchmark calculations MATCH optimally.
+
+[Sector Portfolio - Tech (AAPL, MSFT, NVDA, AVGO, ORCL)]
+Buy-and-Hold Equal Weight Return: 5138.60%
+Daily Rebalanced Equal Weight Return: 2268.34%
+
+The dashboard script uses standard Daily Rebalanced equal weighting, meaning it assumes winners are trimmed and losers are bought daily to maintain exact 20% sector allocation. This perfectly tracks the dynamic behavior of an equal-weight index.

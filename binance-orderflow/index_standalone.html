@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U3 Trader</title>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'buy-green': '#2ecc71',
+                        'sell-purple': '#9b59b6',
+                        'dark-bg': '#161a1e',
+                        'card-bg': '#1e2329',
+                        'grid-line': '#2b3139',
+                        'text-primary': '#eaecef',
+                        'text-secondary': '#848e9c',
+                    },
+                    fontFamily: {
+                        mono: ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lodash -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+
+    <style>
+        body {
+            background-color: #161a1e;
+            color: #eaecef;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons ---
+        const GearIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        );
+        const ChevronDown = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>;
+        const ChevronRight = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>;
+
+
+        // --- DataManager Class ---
+        class DataManager {
+            constructor(symbol = 'btcusdt', onUpdate, onLargeOrder, onStatus) {
+                this.symbol = symbol.toLowerCase();
+                this.ws = null;
+                this.candles = {};
+                this.activeCandleTime = 0;
+                this.onUpdate = onUpdate;
+                this.onLargeOrder = onLargeOrder;
+                this.onStatus = onStatus;
+                this.largeOrderThreshold = 10;
+                this.cumulativeDelta = 0;
+                this.sessionProfile = {};
+                this.profileStats = { poc: 0, vah: 0, val: 0 };
+                this.interval = '1m';
+                this.intervalMs = 60000;
+                this.tickSize = 1;
+                this.isBackfilling = false;
+
+                this.emitUpdate = _.throttle(() => {
+                    if (this.onUpdate) this.onUpdate(this.getSortedCandles(), this.sessionProfile, this.profileStats, this.isBackfilling);
+                }, 100);
+            }
+
+            async setInterval(str) {
+                this.interval = str;
+                const map = {
+                    '1s': 1000, '5s': 5000, '15s': 15000, '30s': 30000,
+                    '1m': 60000, '3m': 180000, '5m': 300000, '15m': 900000, '30m': 1800000, '1h': 3600000
+                };
+                this.intervalMs = map[str] || 60000;
+
+                this.candles = {};
+                this.activeCandleTime = 0;
+                this.emitUpdate();
+
+                if (!['1s', '5s', '15s', '30s'].includes(str)) {
+                    await this.fetchHistory();
+                    this.backfillRealHistory();
+                }
+            }
+
+            setTickSize(val) {
+                this.tickSize = val;
+                this.candles = {};
+                this.sessionProfile = {};
+                this.activeCandleTime = 0;
+                this.emitUpdate();
+                if (!['1s', '5s', '15s', '30s'].includes(this.interval)) {
+                    this.fetchHistory().then(() => this.backfillRealHistory());
+                }
+            }
+
+            // Standard K-Line API
+            async fetchHistory() {
+                try {
+                    let allRaw = [];
+                    let endTime = null;
+                    if (this.onStatus) this.onStatus('Loading Deep History...');
+
+                    for (let i = 0; i < 5; i++) {
+                        let url = `https://fapi.binance.com/fapi/v1/klines?symbol=${this.symbol.toUpperCase()}&interval=${this.interval}&limit=1000`;
+                        if (endTime) url += `&endTime=${endTime}`;
+                        const res = await fetch(url);
+                        const data = await res.json();
+                        if (!data || data.length === 0) break;
+                        allRaw = [...data, ...allRaw];
+                        endTime = data[0][0] - 1;
+                        if (data.length < 1000) break;
+                        await new Promise(r => setTimeout(r, 10));
+                    }
+
+                    allRaw.forEach(k => {
+                        const time = k[0];
+                        const open = parseFloat(k[1]);
+                        const high = parseFloat(k[2]);
+                        const low = parseFloat(k[3]);
+                        const close = parseFloat(k[4]);
+                        const vol = parseFloat(k[5]);
+                        const takerBuyVol = parseFloat(k[9]);
+                        const takerSellVol = vol - takerBuyVol;
+                        const delta = takerBuyVol - takerSellVol;
+
+                        const candle = {
+                            time,
+                            open, high, low, close,
+                            volume: vol,
+                            delta: delta,
+                            cvd: 0,
+                            levels: {},
+                            isHistorical: true,
+                            isSimulated: true
+                        };
+
+                        if (this.tickSize > 0) {
+                            const range = high - low;
+                            if (range / this.tickSize < 300) {
+                                const tempLevels = [];
+                                let totalRawBuy = 0;
+                                let totalRawSell = 0;
+                                for (let p = low; p <= high; p += this.tickSize) {
+                                    if (Math.random() < 0.4) continue;
+                                    let weight = 1.0;
+                                    if (p >= Math.min(open, close) && p <= Math.max(open, close)) weight = 2.5;
+                                    else weight = 0.5;
+                                    weight *= (0.5 + Math.random());
+                                    let randRatio = 0.5 + (Math.random() - 0.5) * 0.8;
+                                    randRatio = Math.max(0.1, Math.min(0.9, randRatio));
+                                    const rawBuy = weight * randRatio;
+                                    const rawSell = weight * (1 - randRatio);
+                                    totalRawBuy += rawBuy;
+                                    totalRawSell += rawSell;
+                                    const pStr = (Math.floor(p / this.tickSize) * this.tickSize).toFixed(this.tickSize < 0.1 ? 2 : 1);
+                                    tempLevels.push({ pStr, rawBuy, rawSell });
+                                }
+                                const buyFactor = totalRawBuy > 0 ? takerBuyVol / totalRawBuy : 0;
+                                const sellFactor = totalRawSell > 0 ? takerSellVol / totalRawSell : 0;
+                                tempLevels.forEach(l => {
+                                    const finalBuy = l.rawBuy * buyFactor;
+                                    const finalSell = l.rawSell * sellFactor;
+                                    if (!candle.levels[l.pStr]) {
+                                        candle.levels[l.pStr] = {
+                                            buy: finalBuy,
+                                            sell: finalSell,
+                                            delta: finalBuy - finalSell
+                                        };
+                                    }
+                                });
+                            }
+                        }
+
+                        this.candles[time] = candle;
+                        if (time > this.activeCandleTime) this.activeCandleTime = time;
+                    });
+
+                    this.rebuildSessionProfile();
+                    if (this.onStatus) this.onStatus('History Loaded');
+                    this.emitUpdate();
+                } catch (e) {
+                    console.error("History fetch failed", e);
+                }
+            }
+
+            // Real Data Backfill
+            async backfillRealHistory() {
+                if (this.isBackfilling) return;
+                this.isBackfilling = true;
+                if (this.onStatus) this.onStatus('Syncing PURE Real Data...');
+                this.emitUpdate();
+                let startTime = Date.now() - 15 * 60 * 1000;
+                const endTime = Date.now();
+                const limit = 1000;
+                try {
+                    while (startTime < endTime) {
+                        const res = await fetch(`https://fapi.binance.com/fapi/v1/aggTrades?symbol=${this.symbol.toUpperCase()}&limit=${limit}&startTime=${startTime}`);
+                        const trades = await res.json();
+                        if (!trades || trades.length === 0) break;
+                        trades.forEach(trade => this.processHistoricalRealTrade(trade));
+                        const lastTradeTime = trades[trades.length - 1].T;
+                        startTime = lastTradeTime + 1;
+                        if (trades.length < limit) break;
+                        await new Promise(r => setTimeout(r, 20));
+                    }
+                } catch (e) { console.error("Backfill failed", e); }
+                finally {
+                    this.isBackfilling = false;
+                    this.rebuildSessionProfile();
+                    if (this.onStatus) this.onStatus('Real Data Synced');
+                    this.emitUpdate();
+                }
+            }
+
+            processHistoricalRealTrade(trade) {
+                const price = parseFloat(trade.p);
+                const quantity = parseFloat(trade.q);
+                const time = trade.T;
+                const isSell = trade.m;
+                const candleTime = Math.floor(time / this.intervalMs) * this.intervalMs;
+                const binnedPrice = (Math.floor(price / this.tickSize) * this.tickSize).toFixed(this.tickSize < 0.1 ? 2 : 1);
+                let candle = this.candles[candleTime];
+                if (!candle || candle.isSimulated) {
+                    if (candle) { candle.isSimulated = false; candle.volume = 0; candle.delta = 0; candle.levels = {}; }
+                    else {
+                        candle = {
+                            time: candleTime,
+                            open: price, high: price, low: price, close: price,
+                            volume: 0, delta: 0, cvd: 0,
+                            levels: {},
+                            isHistorical: true,
+                            isSimulated: false
+                        };
+                        this.candles[candleTime] = candle;
+                    }
+                }
+                candle.close = price;
+                candle.high = Math.max(candle.high, price);
+                candle.low = Math.min(candle.low, price);
+                candle.volume += quantity;
+                candle.delta += (isSell ? -quantity : quantity);
+                if (!candle.levels[binnedPrice]) candle.levels[binnedPrice] = { buy: 0, sell: 0, delta: 0 };
+                if (isSell) { candle.levels[binnedPrice].sell += quantity; candle.levels[binnedPrice].delta -= quantity; }
+                else { candle.levels[binnedPrice].buy += quantity; candle.levels[binnedPrice].delta += quantity; }
+            }
+
+            connect() {
+                this.ws = new WebSocket(`wss://fstream.binance.com/stream?streams=${this.symbol}@aggTrade`);
+                this.ws.onopen = () => { console.log('Connected'); if (this.onStatus) this.onStatus('Connected'); };
+                this.ws.onmessage = (event) => {
+                    const msg = JSON.parse(event.data);
+                    if (msg.stream === `${this.symbol}@aggTrade`) this.processTrade(msg.data);
+                };
+                this.ws.onclose = () => { setTimeout(() => this.connect(), 2000); }
+            }
+
+            processTrade(trade) {
+                const price = parseFloat(trade.p);
+                const quantity = parseFloat(trade.q);
+                const time = trade.T;
+                const isSell = trade.m;
+                const candleTime = Math.floor(time / this.intervalMs) * this.intervalMs;
+                if (isSell) this.cumulativeDelta -= quantity;
+                else this.cumulativeDelta += quantity;
+                const rawPrice = price;
+                const binnedPrice = (Math.floor(rawPrice / this.tickSize) * this.tickSize).toFixed(this.tickSize < 0.1 ? 2 : 1);
+
+                // Keep incremental update for live
+                if (!this.sessionProfile[binnedPrice]) this.sessionProfile[binnedPrice] = { buy: 0, sell: 0 };
+                if (isSell) this.sessionProfile[binnedPrice].sell += quantity;
+                else this.sessionProfile[binnedPrice].buy += quantity;
+
+                if (candleTime > this.activeCandleTime) this.activeCandleTime = candleTime;
+                if (!this.candles[candleTime]) {
+                    this.candles[candleTime] = {
+                        time: candleTime,
+                        open: rawPrice, high: rawPrice, low: rawPrice, close: rawPrice,
+                        volume: 0, delta: 0, cvd: this.cumulativeDelta,
+                        levels: {},
+                        isHistorical: false,
+                        isSimulated: false
+                    };
+                    const keys = Object.keys(this.candles);
+                    if (keys.length > 5000) delete this.candles[keys.sort()[0]];
+                }
+                const candle = this.candles[candleTime];
+                if (candle.isSimulated) { candle.isSimulated = false; candle.volume = 0; candle.levels = {}; candle.delta = 0; }
+                candle.close = rawPrice;
+                candle.high = Math.max(candle.high, rawPrice);
+                candle.low = Math.min(candle.low, rawPrice);
+                candle.volume += quantity;
+                candle.delta += (isSell ? -quantity : quantity);
+                candle.cvd = this.cumulativeDelta;
+
+                if (!candle.levels[binnedPrice]) candle.levels[binnedPrice] = { buy: 0, sell: 0, delta: 0 };
+                if (isSell) { candle.levels[binnedPrice].sell += quantity; candle.levels[binnedPrice].delta -= quantity; }
+                else { candle.levels[binnedPrice].buy += quantity; candle.levels[binnedPrice].delta += quantity; }
+
+                if (quantity >= this.largeOrderThreshold) {
+                    if (this.onLargeOrder) this.onLargeOrder({ price: rawPrice, quantity, isSell, time });
+                }
+                this.emitUpdate();
+            }
+
+            // --- REBUILD COMPOSITE PROFILE & CALC VA (70%) ---
+            rebuildSessionProfile() {
+                this.sessionProfile = {};
+                // Iterate ALL candles (History + Live)
+                Object.values(this.candles).forEach(c => {
+                    Object.entries(c.levels).forEach(([price, vol]) => {
+                        if (!this.sessionProfile[price]) this.sessionProfile[price] = { buy: 0, sell: 0 };
+                        this.sessionProfile[price].buy += vol.buy;
+                        this.sessionProfile[price].sell += vol.sell;
+                    });
+                });
+
+                // Calculate Value Area (70%)
+                const levels = Object.entries(this.sessionProfile).map(([p, v]) => ({
+                    price: parseFloat(p),
+                    vol: v.buy + v.sell
+                })).sort((a, b) => b.vol - a.vol); // Sort by Vol Desc
+
+                if (levels.length > 0) {
+                    const totalVol = levels.reduce((sum, l) => sum + l.vol, 0);
+                    const reqVol = totalVol * 0.70;
+
+                    const pocLevel = levels[0];
+                    const sortedByPrice = [...levels].sort((a, b) => a.price - b.price);
+                    const pocIdx = sortedByPrice.findIndex(l => l.price === pocLevel.price);
+
+                    let currentVol = pocLevel.vol;
+                    let upIdx = pocIdx;
+                    let downIdx = pocIdx;
+
+                    while (currentVol < reqVol) {
+                        const upVol = (upIdx + 1 < sortedByPrice.length) ? sortedByPrice[upIdx + 1].vol : 0;
+                        const downVol = (downIdx - 1 >= 0) ? sortedByPrice[downIdx - 1].vol : 0;
+
+                        if (upVol === 0 && downVol === 0) break;
+
+                        if (upVol >= downVol) {
+                            upIdx++;
+                            currentVol += upVol;
+                        } else {
+                            downIdx--;
+                            currentVol += downVol;
+                        }
+                    }
+
+                    this.profileStats = {
+                        poc: pocLevel.price,
+                        vah: sortedByPrice[upIdx].price,
+                        val: sortedByPrice[downIdx].price
+                    };
+                } else {
+                    this.profileStats = { poc: 0, vah: 0, val: 0 };
+                }
+            }
+
+            getSortedCandles() { return Object.values(this.candles).sort((a, b) => a.time - b.time); }
+            setThreshold(val) { this.largeOrderThreshold = val; }
+            disconnect() { if (this.ws) this.ws.close(); }
+        }
+
+        // --- Settings Components ---
+        const SettingsSection = ({ title, children, defaultOpen = true }) => {
+            const [isOpen, setIsOpen] = useState(defaultOpen);
+            return (
+                <div className="mb-2">
+                    <div onClick={() => setIsOpen(!isOpen)} className="flex items-center cursor-pointer py-1 hover:bg-white/5 px-2 rounded select-none">
+                        <span className="mr-2 text-text-secondary">{isOpen ? <ChevronDown /> : <ChevronRight />}</span>
+                        <span className="text-xs font-bold text-text-secondary">{title}</span>
+                    </div>
+                    {isOpen && <div className="pl-6 pr-2 py-1 space-y-2">{children}</div>}
+                </div>
+            );
+        };
+
+        const SettingsRow = ({ label, children }) => (
+            <div className="flex items-center justify-between">
+                <span className="text-sm text-text-primary">{label}</span>
+                <div className="flex items-center">{children}</div>
+            </div>
+        );
+
+        const SettingsPanel = ({ settings, setSettings, onClose }) => {
+            return (
+                <div className="absolute top-12 left-4 w-80 bg-[#1e2329] border border-[#2b3139] shadow-xl rounded z-50 overflow-hidden flex flex-col">
+                    <div className="flex items-center justify-between px-3 py-2 bg-[#2b3139]">
+                        <span className="text-sm font-bold text-text-primary">Settings</span>
+                        <button onClick={onClose} className="text-text-secondary hover:text-white">✕</button>
+                    </div>
+                    <div className="p-2 overflow-y-auto max-h-[80vh]">
+                        <SettingsSection title="TYPOLOGY">
+                            <SettingsRow label="Type">
+                                <select value={settings.profileType} onChange={e => setSettings({ ...settings, profileType: e.target.value })} className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary outline-none">
+                                    <option value="bidask">Orderflow (Bid/Ask)</option>
+                                    <option value="delta">Delta Profile</option>
+                                    <option value="volume">Volume Profile</option>
+                                </select>
+                            </SettingsRow>
+                            <SettingsRow label="Mode">
+                                <select className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary outline-none">
+                                    <option value="profile">Profile</option>
+                                </select>
+                            </SettingsRow>
+                        </SettingsSection>
+
+                        <SettingsSection title="DATA SETTINGS">
+                            <SettingsRow label="Input data">
+                                <select className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary outline-none">
+                                    <option value="volume">Volume</option>
+                                </select>
+                            </SettingsRow>
+                            <SettingsRow label="Filter min">
+                                <input type="number" value={settings.filterMin} onChange={e => setSettings({ ...settings, filterMin: Number(e.target.value) })} className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary w-20 text-right outline-none" />
+                            </SettingsRow>
+                            <SettingsRow label="Filter max">
+                                <input type="number" value={settings.filterMax} onChange={e => setSettings({ ...settings, filterMax: Number(e.target.value) })} className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary w-20 text-right outline-none" />
+                            </SettingsRow>
+                        </SettingsSection>
+
+                        <SettingsSection title="TICK GROUPING">
+                            <SettingsRow label="Auto grouping">
+                                <select className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary outline-none">
+                                    <option value="manual">Manual</option>
+                                </select>
+                            </SettingsRow>
+                            <SettingsRow label="Manual ticks">
+                                <input type="number" value={settings.tickSize} onChange={e => setSettings({ ...settings, tickSize: Number(e.target.value) })} className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary w-20 text-right outline-none" />
+                            </SettingsRow>
+                            <SettingsRow label="Group mode">
+                                <select className="bg-[#161a1e] border border-[#2b3139] rounded px-2 py-1 text-xs text-text-primary outline-none">
+                                    <option value="fixed">Fixed</option>
+                                </select>
+                            </SettingsRow>
+                        </SettingsSection>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- FootprintChart Component ---
+        const FootprintChart = ({ data, sessionProfile, profileStats, largeOrders, settings, showProfile }) => {
+            const canvasRef = useRef(null);
+            const containerRef = useRef(null);
+            const { tickSize, profileType, filterMin } = settings;
+
+            // Viewport
+            const [offsetY, setOffsetY] = useState(0);
+            const [scaleY, setScaleY] = useState(24);
+            const [candleWidth, setCandleWidth] = useState(60);
+            const [offsetX, setOffsetX] = useState(0);
+
+            const [initialized, setInitialized] = useState(false);
+
+            // Interaction
+            const [dragMode, setDragMode] = useState(null);
+            const [lastMouse, setLastMouse] = useState({ x: 0, y: 0 });
+            const [mousePos, setMousePos] = useState({ x: null, y: null });
+            const [cursor, setCursor] = useState('crosshair');
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                let animationFrameId;
+
+                const render = () => {
+                    if (!canvas || !containerRef.current) return;
+
+                    const { clientWidth, clientHeight } = containerRef.current;
+                    if (canvas.width !== clientWidth || canvas.height !== clientHeight) {
+                        canvas.width = clientWidth; canvas.height = clientHeight;
+                    }
+
+                    // Layout
+                    const priceAxisWidth = 60;
+                    const sessionProfileWidth = 80;
+                    const timeAxisHeight = 25;
+                    const volPaneHeight = 100; // Sub-chart for Volume
+
+                    const mainChartBottom = canvas.height - timeAxisHeight - volPaneHeight;
+                    const chartRight = canvas.width - priceAxisWidth - sessionProfileWidth;
+
+                    // Clear
+                    ctx.fillStyle = '#161a1e'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const latestCandle = data[data.length - 1];
+                    if (!initialized && latestCandle) {
+                        setOffsetY(latestCandle.close);
+                        setInitialized(true);
+                    }
+
+                    const centerPrice = offsetY || (latestCandle ? latestCandle.close : 0);
+                    const centerY = mainChartBottom / 2;
+
+                    // --- Main Chart Area ---
+                    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, chartRight, mainChartBottom); ctx.clip();
+
+                    const minP = centerPrice - (mainChartBottom / 2) / scaleY;
+                    const maxP = centerPrice + (mainChartBottom / 2) / scaleY;
+
+                    // Grid
+                    const range = maxP - minP;
+                    let gridStep = Math.pow(10, Math.floor(Math.log10(range / 8)));
+                    if (range / 8 / gridStep > 2) gridStep *= 2;
+                    if (gridStep < tickSize) gridStep = tickSize;
+                    if (gridStep < 0.1) gridStep = 0.1;
+
+                    ctx.strokeStyle = '#2b3139'; ctx.lineWidth = 1;
+                    const startP = Math.floor(minP / gridStep) * gridStep;
+                    for (let p = startP; p <= maxP; p += gridStep) {
+                        const y = centerY + (centerPrice - p) * scaleY;
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(chartRight, y); ctx.stroke();
+                    }
+
+                    // Time Grid
+                    const timeStepIdx = Math.ceil(100 / candleWidth);
+
+                    // Candles
+                    data.forEach((candle, i) => {
+                        const rightEdge = chartRight - 50;
+                        const dist = data.length - 1 - i;
+                        const x = rightEdge - (dist * candleWidth) + offsetX;
+
+                        if (x > -candleWidth && x < chartRight + candleWidth) {
+                            if (i % timeStepIdx === 0) {
+                                ctx.strokeStyle = '#2b3139';
+                                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, mainChartBottom + volPaneHeight); ctx.stroke();
+                            }
+                            drawCandle(ctx, candle, x, centerY, centerPrice, scaleY, candleWidth, tickSize, showProfile, filterMin, i, data.length, profileType);
+                        }
+                    });
+
+                    // Large Orders
+                    largeOrders.forEach(o => {
+                        const idx = data.findIndex(c => c.time <= o.time && c.time + 30000 > o.time);
+                        if (idx !== -1) {
+                            const dist = data.length - 1 - idx;
+                            const x = chartRight - 50 - (dist * candleWidth) + offsetX;
+                            if (x > -candleWidth && x < chartRight) {
+
+                                const y = centerY + (centerPrice - o.price) * scaleY;
+                                if (y < 0 || y > mainChartBottom) return;
+
+                                ctx.font = 'bold 12px sans-serif';
+                                const txt = Math.round(o.quantity).toString();
+                                const metrics = ctx.measureText(txt);
+                                const padding = 6;
+                                const w = metrics.width + padding * 2;
+                                const h = 20;
+
+                                // Draw Box
+                                ctx.fillStyle = o.isSell ? '#9b59b6' : '#2ecc71';
+                                const boxX = x + 10;
+                                ctx.fillRect(boxX, y - h / 2, w, h);
+
+                                // Draw Text
+                                ctx.fillStyle = '#ffffff';
+                                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                                ctx.fillText(txt, boxX + w / 2, y);
+                            }
+                        }
+                    });
+
+                    // --- DRAW VAH / VAL / POC LINES (REMOVED as requested) ---
+                    // The block that drew horizontal lines is now GONE.
+
+                    ctx.restore();
+
+                    // --- Volume Pane (Bottom) ---
+                    const volTop = mainChartBottom;
+                    ctx.fillStyle = '#1e2329'; ctx.fillRect(0, volTop, chartRight, volPaneHeight);
+                    ctx.strokeStyle = '#2b3139'; ctx.beginPath(); ctx.moveTo(0, volTop); ctx.lineTo(chartRight, volTop); ctx.stroke();
+
+                    // Find Max Vol
+                    let maxVol = 0;
+                    data.forEach((c, i) => {
+                        const dist = data.length - 1 - i;
+                        const x = chartRight - 50 - (dist * candleWidth) + offsetX;
+                        if (x > -candleWidth && x < chartRight) maxVol = Math.max(maxVol, c.volume);
+                    });
+
+                    data.forEach((candle, i) => {
+                        const dist = data.length - 1 - i;
+                        const x = chartRight - 50 - (dist * candleWidth) + offsetX;
+                        if (x > -candleWidth && x < chartRight) {
+                            const h = maxVol > 0 ? (candle.volume / maxVol) * (volPaneHeight - 10) : 0;
+                            // Color based on Delta
+                            const barColor = candle.delta >= 0 ? '#2ecc71' : '#9b59b6';
+                            ctx.fillStyle = barColor;
+                            const bw = candleWidth * 0.8;
+                            ctx.fillRect(x - bw / 2, volTop + volPaneHeight - h, bw, h);
+                        }
+                    });
+
+                    // --- Session Profile (Right) ---
+                    const profX = chartRight;
+                    const profW = sessionProfileWidth;
+                    ctx.fillStyle = '#1e2329'; ctx.fillRect(profX, 0, profW, mainChartBottom);
+                    ctx.strokeStyle = '#2b3139'; ctx.beginPath(); ctx.moveTo(profX, 0); ctx.lineTo(profX, mainChartBottom); ctx.stroke();
+
+                    const levels = Object.entries(sessionProfile).filter(([pStr]) => {
+                        const p = parseFloat(pStr);
+                        return p >= minP && p <= maxP;
+                    });
+
+                    if (levels.length > 0) {
+                        let maxVal = 0;
+                        levels.forEach(([, v]) => {
+                            if (profileType === 'delta') maxVal = Math.max(maxVal, Math.abs(v.buy - v.sell));
+                            else maxVal = Math.max(maxVal, v.buy + v.sell);
+                        });
+
+                        const rowH = scaleY * tickSize;
+                        levels.forEach(([pStr, v]) => {
+                            const p = parseFloat(pStr);
+                            const y = centerY + (centerPrice - p - tickSize / 2) * scaleY;
+                            const h = Math.max(rowH - 0.5, 1);
+
+                            // Check VA
+                            const inVA = (p <= profileStats.vah && p >= profileStats.val);
+
+                            if (profileType === 'delta') {
+                                const delta = v.buy - v.sell;
+                                const barW = maxVal > 0 ? (Math.abs(delta) / maxVal) * (profW / 2 * 0.9) : 0;
+                                const centerX = profX + profW / 2;
+                                ctx.strokeStyle = '#333'; ctx.beginPath(); ctx.moveTo(centerX, y); ctx.lineTo(centerX, y + h); ctx.stroke();
+                                ctx.fillStyle = delta >= 0 ? '#2ecc71' : '#9b59b6';
+                                if (delta >= 0) ctx.fillRect(centerX, y - h / 2, barW, h);
+                                else ctx.fillRect(centerX - barW, y - h / 2, barW, h);
+                            } else {
+                                const total = v.buy + v.sell;
+                                const barW = maxVal > 0 ? (total / maxVal) * (profW * 0.9) : 0;
+
+                                // RIGHT ALIGNMENT (Other Direction)
+                                // Standard was profX + 0.
+                                // Right aligned is (profX + profW) - barW
+
+                                ctx.fillStyle = inVA ? '#ffffff' : 'rgba(120, 120, 120, 0.4)';
+                                ctx.fillRect(profX + profW - barW, y - h / 2, barW, h);
+                            }
+                        });
+                    }
+
+                    // --- Price Axis ---
+                    const px = profX + profW;
+                    ctx.fillStyle = '#161a1e'; ctx.fillRect(px, 0, priceAxisWidth, mainChartBottom);
+                    ctx.strokeStyle = '#2b3139'; ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, mainChartBottom); ctx.stroke();
+                    ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#848e9c'; ctx.font = '11px sans-serif';
+                    for (let p = startP; p <= maxP; p += gridStep) {
+                        const y = centerY + (centerPrice - p) * scaleY;
+                        if (y > 0 && y < mainChartBottom) {
+                            // Highlight VA labels? User said "don't draw lines".
+                            // Labels are fine, but maybe just keep it clean.
+                            // Let's keep label highlights for reference as they are minimal.
+                            const isPoc = Math.abs(p - profileStats.poc) < tickSize / 2;
+                            const isVah = Math.abs(p - profileStats.vah) < tickSize / 2;
+                            const isVal = Math.abs(p - profileStats.val) < tickSize / 2;
+
+                            if (isPoc) ctx.fillStyle = '#f1c40f';
+                            else if (isVah || isVal) ctx.fillStyle = '#ffffff';
+                            else ctx.fillStyle = '#848e9c';
+
+                            ctx.fillText(p.toFixed(tickSize < 0.1 ? 2 : 1), px + 4, y);
+                            ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px + 3, y); ctx.stroke();
+                        }
+                    }
+
+                    // Time Labels
+                    const timeBottom = mainChartBottom + volPaneHeight;
+                    ctx.fillStyle = '#161a1e'; ctx.fillRect(0, timeBottom, canvas.width, timeAxisHeight);
+
+                    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    data.forEach((candle, i) => {
+                        const dist = data.length - 1 - i;
+                        const x = chartRight - 50 - (dist * candleWidth) + offsetX;
+                        if (x > -candleWidth && x < chartRight && i % timeStepIdx === 0) {
+                            const t = new Date(candle.time);
+                            ctx.fillText(`${t.getHours()}:${t.getMinutes().toString().padStart(2, '0')}:${t.getSeconds().toString().padStart(2, '0')}`, x, timeBottom + timeAxisHeight / 2);
+                        }
+                    });
+
+                    animationFrameId = requestAnimationFrame(render);
+                };
+
+                // --- UPDATED FORMAT LOGIC ---
+                const formatVol = (n) => {
+                    // Always show 2 decimals for values < 100 to meet "0.01 unit" request
+                    if (n > 1000) return (n / 1000).toFixed(1) + 'k';
+                    if (n > 100) return Math.round(n).toString();
+                    return n.toFixed(2);
+                };
+
+                const drawCandle = (ctx, candle, x, centerY, centerPrice, scaleY, width, tickSize, showProfile, filterMin, i, totalCount, profileType) => {
+                    const color = candle.delta >= 0 ? '#2ecc71' : '#9b59b6';
+                    const range = candle.high - candle.low;
+
+                    const yHigh = centerY + (centerPrice - candle.high) * scaleY;
+                    const yLow = centerY + (centerPrice - candle.low) * scaleY;
+                    const yOpen = centerY + (centerPrice - candle.open) * scaleY;
+                    const yClose = centerY + (centerPrice - candle.close) * scaleY;
+
+                    // --- REJECTION SIGNAL (White Box) ---
+                    // Condition: Closed Candle + Pin Bar/Doji (Body < 30%) + Long Wick (> 50%) + Max Delta in Wick
+                    const isClosed = i < totalCount - 1;
+                    if (isClosed && range > 0 && Object.keys(candle.levels).length > 0) {
+                        const topBody = Math.max(candle.open, candle.close);
+                        const bottomBody = Math.min(candle.open, candle.close);
+                        const bodyLen = topBody - bottomBody;
+                        const midPoint = candle.low + range / 2;
+
+                        const uWickLen = candle.high - topBody;
+                        const lWickLen = bottomBody - candle.low;
+
+                        const isPinOrDoji = (bodyLen / range) < 0.3; // Body is small (less than 30% of range)
+
+                        if (isPinOrDoji) {
+                            // Find Level with Max Abs Delta
+                            let maxDeltaVal = -1;
+                            let maxDeltaPrice = 0;
+
+                            Object.entries(candle.levels).forEach(([pStr, v]) => {
+                                const d = Math.abs(v.delta);
+                                if (d > maxDeltaVal) {
+                                    maxDeltaVal = d;
+                                    maxDeltaPrice = parseFloat(pStr);
+                                }
+                            });
+
+                            // Rejection must be a dominant wick (> 50% of range)
+                            // AND Max Delta must be in the respective HALF (Upper for Bearish, Lower for Bullish)
+                            const isUpperRejection = (uWickLen / range > 0.5) && (maxDeltaPrice >= midPoint); // Stronger check: must be in upper half
+                            const isLowerRejection = (lWickLen / range > 0.5) && (maxDeltaPrice <= midPoint); // Stronger check: must be in lower half
+
+                            if (isUpperRejection || isLowerRejection) {
+                                ctx.lineWidth = 2;
+                                if (isUpperRejection) {
+                                    ctx.strokeStyle = '#ff3333'; // Bright Red for Bearish Rejection (Top Wick)
+                                } else {
+                                    ctx.strokeStyle = '#ffffff'; // White for Bullish Rejection (Bottom Wick)
+                                }
+                                // Draw enclosing box
+                                ctx.strokeRect(x - width / 2, yHigh, width, Math.abs(yLow - yHigh));
+                            }
+                        }
+                    }
+
+                    // Style Switch
+                    if (showProfile && width > 40) {
+                        // --- 1. Draw Thin Candlestick Body Line (Background) ---
+                        ctx.strokeStyle = color; ctx.lineWidth = 2;
+                        const bodyX = x - width / 2 + 2; // Keep body on left edge
+
+                        // Full High-Low Range
+                        ctx.beginPath(); ctx.moveTo(bodyX, yHigh); ctx.lineTo(bodyX, yLow); ctx.stroke();
+
+                        // Open-Close Range
+                        const bodyTop = Math.min(yOpen, yClose);
+                        const bodyH = Math.max(Math.abs(yOpen - yClose), 1);
+                        ctx.fillStyle = color;
+                        ctx.fillRect(bodyX - 1, bodyTop, 4, bodyH);
+
+                        // --- 2. Content Rendering based on profileType ---
+                        const rowH = scaleY * tickSize;
+
+                        if (Object.keys(candle.levels).length > 0 && rowH > 2) { // Allow smaller height for Profile modes
+
+                            // Calculate Max Volume/Delta inside this candle for Scaling
+                            let maxVolInCandle = 0;
+                            let maxDeltaInCandle = 0;
+                            Object.values(candle.levels).forEach(v => {
+                                maxVolInCandle = Math.max(maxVolInCandle, v.buy + v.sell);
+                                maxDeltaInCandle = Math.max(maxDeltaInCandle, Math.abs(v.buy - v.sell));
+                            });
+
+
+                            Object.entries(candle.levels).forEach(([pStr, v]) => {
+                                const total = v.buy + v.sell;
+                                if (total < 0.001 || total < filterMin) return;
+
+                                const p = parseFloat(pStr);
+                                const y = centerY + (centerPrice - p - tickSize / 2) * scaleY;
+                                const leftX = x - width / 2 + 12;
+                                const contentWidth = width - 14;
+
+                                if (profileType === 'bidask') {
+                                    // --- BID/ASK CLUSTER (Standard) ---
+                                    if (rowH < 10) return; // Don't draw text if too cramped
+
+                                    const isBuyImbal = v.buy > v.sell * 3 && v.sell > 0 && total > 5;
+                                    const isSellImbal = v.sell > v.buy * 3 && v.buy > 0 && total > 5;
+
+                                    if (isBuyImbal || isSellImbal) {
+                                        ctx.strokeStyle = '#f1c40f'; ctx.lineWidth = 1;
+                                        ctx.strokeRect(x - width / 2 + 6, y - rowH / 2 + 1, width - 8, rowH - 2);
+                                    }
+
+                                    ctx.textBaseline = 'middle';
+                                    ctx.textAlign = 'right';
+                                    ctx.fillStyle = isSellImbal ? '#ffffff' : '#9b59b6';
+                                    ctx.font = isSellImbal ? 'bold 10px sans-serif' : '10px sans-serif';
+                                    ctx.fillText(formatVol(v.sell), x - 2, y);
+
+                                    ctx.textAlign = 'left';
+                                    ctx.fillStyle = isBuyImbal ? '#ffffff' : '#2ecc71';
+                                    ctx.font = isBuyImbal ? 'bold 10px sans-serif' : '10px sans-serif';
+                                    ctx.fillText(formatVol(v.buy), x + 2, y);
+                                }
+                                else if (profileType === 'delta') {
+                                    // --- DELTA PROFILE (Bars) - LEFT ALIGNED AS REQUESTED ---
+                                    const delta = v.buy - v.sell;
+                                    const absDelta = Math.abs(delta);
+                                    if (maxDeltaInCandle > 0 && absDelta > 0) {
+                                        const barW = (absDelta / maxDeltaInCandle) * (contentWidth * 0.9); // max 90% width
+                                        const barH = Math.max(rowH - 1, 1);
+
+                                        // Left Aligned
+                                        ctx.fillStyle = delta > 0 ? '#2ecc71' : '#9b59b6';
+                                        ctx.fillRect(leftX, y - barH / 2, barW, barH);
+                                    }
+                                }
+                                else if (profileType === 'volume') {
+                                    // --- VOLUME PROFILE (Bars) ---
+                                    if (maxVolInCandle > 0 && total > 0) {
+                                        const barW = (total / maxVolInCandle) * (contentWidth * 0.9);
+                                        const barH = Math.max(rowH - 1, 1);
+
+                                        // Left Aligned
+                                        ctx.fillStyle = 'rgba(120, 140, 160, 0.5)';
+                                        ctx.fillRect(leftX, y - barH / 2, barW, barH);
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        // --- NORMAL COMPACT STYLE ---
+                        const barW = width * 0.7;
+                        const barX = x - barW / 2;
+
+                        ctx.strokeStyle = color; ctx.lineWidth = 1;
+                        ctx.beginPath(); ctx.moveTo(x, yHigh); ctx.lineTo(x, yLow); ctx.stroke();
+
+                        const bodyTop = Math.min(yOpen, yClose);
+                        const bodyH = Math.max(Math.abs(yOpen - yClose), 1);
+
+                        ctx.fillStyle = color;
+                        ctx.fillRect(barX, bodyTop, barW, bodyH);
+                    }
+                };
+
+                render();
+                return () => cancelAnimationFrame(animationFrameId);
+            }, [data, sessionProfile, profileStats, largeOrders, offsetY, scaleY, candleWidth, offsetX, initialized, mousePos, settings, showProfile]);
+
+            const handleMouseDown = (e) => {
+                const rect = containerRef.current.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const h = rect.height; const w = rect.width;
+                if (x > w - 140) setDragMode('price');
+                else if (y > h - 40) setDragMode('time');
+                else setDragMode('chart');
+                setLastMouse({ x: e.clientX, y: e.clientY });
+            };
+            const handleMouseUp = () => setDragMode(null);
+            const handleMouseMove = (e) => {
+                if (dragMode) {
+                    const dx = e.clientX - lastMouse.x;
+                    const dy = e.clientY - lastMouse.y;
+                    // Updated: Remove strict max limits on scaleY
+                    if (dragMode === 'price') setScaleY(p => Math.max(0.00001, p * (dy > 0 ? 0.98 : 1.02)));
+                    else if (dragMode === 'time') setCandleWidth(p => Math.max(1, p * (1 + dx * 0.01)));
+                    else { setOffsetX(p => p + dx); setOffsetY(p => p + dy / scaleY); }
+                    setLastMouse({ x: e.clientX, y: e.clientY });
+                }
+                const rect = containerRef.current.getBoundingClientRect();
+                setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+            };
+            const handleWheel = (e) => {
+                e.preventDefault();
+                const rect = containerRef.current.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                const chartRightBoundary = width - 80 - 60; // profile + price axis
+
+                if (x > chartRightBoundary) {
+                    // Price Zoom (in Price Axis area)
+                    // Updated: Remove strict max limits on scaleY
+                    const factor = e.deltaY < 0 ? 1.1 : 0.9;
+                    setScaleY(prev => Math.max(0.00001, prev * factor));
+                } else {
+                    // Chart ZOOM (Time Axis) - Focused on Mouse X
+                    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+                    const newWidth = Math.max(1, Math.min(600, candleWidth * zoomFactor));
+
+                    const rightEdge = width - 140 - 50;
+                    const dist = (rightEdge + offsetX - x) / candleWidth;
+                    const newOffset = x - rightEdge + (dist * newWidth);
+
+                    setCandleWidth(newWidth);
+                    setOffsetX(newOffset);
+                }
+            };
+
+            return (
+                <div ref={containerRef} className="w-full h-full relative" style={{ cursor: 'crosshair' }}
+                    onWheel={handleWheel} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} onMouseMove={handleMouseMove}>
+                    <canvas ref={canvasRef} className="block w-full h-full" />
+                </div>
+            );
+        };
+
+        // --- App ---
+        const App = () => {
+            const [data, setData] = useState([]);
+            const [sessionProfile, setSessionProfile] = useState({});
+            const [profileStats, setProfileStats] = useState({ poc: 0, vah: 0, val: 0 });
+            const [largeOrders, setLargeOrders] = useState([]);
+            const [isConnected, setIsConnected] = useState(false);
+            const [symbol, setSymbol] = useState('BTCUSDT');
+            const [threshold, setThreshold] = useState(10);
+            const [timeframe, setTimeframe] = useState('1m');
+            const [showProfile, setShowProfile] = useState(true);
+            const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+            const [status, setStatus] = useState('');
+
+            // New Unified Settings State
+            const [settings, setSettings] = useState({
+                tickSize: 1,
+                profileType: 'bidask', // Default to Bid/Ask
+                filterMin: 0,
+                filterMax: 0
+            });
+
+            const managerRef = useRef(null);
+
+            useEffect(() => {
+                const manager = new DataManager(symbol,
+                    (newCandles, newProfile, newStats, isBackfilling) => {
+                        setData([...newCandles]);
+                        setSessionProfile({ ...newProfile });
+                        setProfileStats(newStats);
+                        setIsConnected(true);
+                    },
+                    (largeOrder) => { setLargeOrders(prev => [...prev, largeOrder]); },
+                    (msg) => setStatus(msg)
+                );
+                manager.connect();
+                managerRef.current = manager;
+                return () => manager.disconnect();
+            }, [symbol]);
+
+            useEffect(() => { if (managerRef.current) managerRef.current.setThreshold(threshold); }, [threshold]);
+            useEffect(() => { if (managerRef.current) managerRef.current.setInterval(timeframe); }, [timeframe]);
+            useEffect(() => { if (managerRef.current) managerRef.current.setTickSize(settings.tickSize); }, [settings.tickSize]);
+
+            return (
+                <div className="flex flex-col h-screen w-screen bg-dark-bg text-text-primary overflow-hidden">
+                    <div className="h-12 border-b border-grid-line flex items-center px-4 justify-between bg-card-bg z-10 shrink-0">
+                        <div className="flex items-center space-x-4">
+                            <h1 className="text-lg font-bold text-buy-green">U3 <span className="text-white text-xs font-normal">Trader</span></h1>
+                            <div className="flex items-center space-x-2 bg-dark-bg px-2 py-1 rounded">
+                                <span className="text-xs text-text-secondary">Sym</span>
+                                <select value={symbol} onChange={(e) => setSymbol(e.target.value)} className="bg-transparent text-sm font-mono outline-none">
+                                    <option value="BTCUSDT">BTCUSDT</option>
+                                    <option value="ETHUSDT">ETHUSDT</option>
+                                    <option value="SOLUSDT">SOLUSDT</option>
+                                    <option value="BNBUSDT">BNBUSDT</option>
+                                    <option value="XRPUSDT">XRPUSDT</option>
+                                    <option value="DOGEUSDT">DOGEUSDT</option>
+                                    <option value="ADAUSDT">ADAUSDT</option>
+                                    <option value="TRXUSDT">TRXUSDT</option>
+                                    <option value="AVAXUSDT">AVAXUSDT</option>
+                                    <option value="LINKUSDT">LINKUSDT</option>
+                                </select>
+                            </div>
+                            <div className="flex items-center space-x-2 bg-dark-bg px-2 py-1 rounded">
+                                <span className="text-xs text-text-secondary">TF</span>
+                                <select value={timeframe} onChange={(e) => setTimeframe(e.target.value)} className="bg-transparent text-sm font-mono outline-none">
+                                    <option value="1s">1s</option>
+                                    <option value="5s">5s</option>
+                                    <option value="15s">15s</option>
+                                    <option value="30s">30s</option>
+                                </select>
+                                <select value={timeframe} onChange={(e) => setTimeframe(e.target.value)} className="bg-transparent text-sm font-mono outline-none">
+                                    <option value="1m">1m</option>
+                                    <option value="5m">5m</option>
+                                    <option value="15m">15m</option>
+                                    <option value="1h">1h</option>
+                                </select>
+                            </div>
+
+                            {/* Status Indicator */}
+                            {status && <span className="text-xs text-yellow-400 animate-pulse">{status}</span>}
+
+                            {/* Settings Toggle */}
+                            <button onClick={() => setIsSettingsOpen(!isSettingsOpen)} className={`p-1 rounded hover:bg-white/10 ${isSettingsOpen ? 'text-buy-green' : 'text-text-secondary'}`}>
+                                <GearIcon />
+                            </button>
+
+                            <button onClick={() => setShowProfile(!showProfile)} className={`px-2 py-1 text-xs rounded border ${showProfile ? 'border-buy-green text-buy-green' : 'border-gray-600 text-gray-400'}`}>
+                                Profile: {showProfile ? 'ON' : 'OFF'}
+                            </button>
+                            <div className="flex items-center space-x-2 bg-dark-bg px-2 py-1 rounded">
+                                <span className="text-xs text-text-secondary">Whale</span>
+                                <input type="number" value={threshold} onChange={(e) => setThreshold(Number(e.target.value))} className="bg-transparent text-sm font-mono w-16 outline-none" />
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-buy-green' : 'bg-red-500'}`}></div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 relative overflow-hidden">
+                        {isSettingsOpen && <SettingsPanel settings={settings} setSettings={setSettings} onClose={() => setIsSettingsOpen(false)} />}
+                        <FootprintChart data={data} sessionProfile={sessionProfile} profileStats={profileStats} largeOrders={largeOrders} settings={settings} showProfile={showProfile} />
+                    </div>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

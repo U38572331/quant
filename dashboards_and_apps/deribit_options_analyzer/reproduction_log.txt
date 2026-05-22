@@ -1,0 +1,26 @@
+Fetching data...
+Total options: 584
+
+--- Max Pain by Specific Expiry ---
+Expiry: 2025-12-27 (Days: 0) | Options: 24 | Max Pain: 88000.0
+Expiry: 2025-12-28 (Days: 1) | Options: 24 | Max Pain: 88000.0
+Expiry: 2025-12-29 (Days: 2) | Options: 22 | Max Pain: 88000.0
+Expiry: 2026-01-02 (Days: 6) | Options: 44 | Max Pain: 88000.0
+Expiry: 2026-01-09 (Days: 13) | Options: 36 | Max Pain: 88000.0
+Expiry: 2026-01-16 (Days: 20) | Options: 30 | Max Pain: 89000.0
+Expiry: 2026-01-30 (Days: 34) | Options: 74 | Max Pain: 90000.0
+Expiry: 2026-02-27 (Days: 62) | Options: 64 | Max Pain: 90000.0
+Expiry: 2026-03-27 (Days: 90) | Options: 78 | Max Pain: 100000.0
+Expiry: 2026-06-26 (Days: 181) | Options: 82 | Max Pain: 100000.0
+Expiry: 2026-09-25 (Days: 272) | Options: 70 | Max Pain: 100000.0
+Expiry: 2026-12-25 (Days: 363) | Options: 36 | Max Pain: 95000.0
+
+--- Max Pain by App Logic (Aggregated) ---
+0DTE (<24h) Max Pain: 88000.0
+Week (<7d) Max Pain: 88000.0
+Month (<30d) Max Pain: 88000.0
+Quarter (<90d) Max Pain: 90000.0
+
+--- Identifying 'Quarterly' Candidate ---
+Candidate Quarterly: 2026-02-27 | Max Pain: 90000.0
+Candidate Quarterly: 2026-03-27 | Max Pain: 100000.0

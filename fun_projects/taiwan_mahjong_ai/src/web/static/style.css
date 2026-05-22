@@ -1,0 +1,291 @@
+body {
+    background-color: #111;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: white;
+}
+
+#game-stage {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #1a2a1a 0%, #000 100%);
+    perspective: 1500px;
+    /* Deep perspective */
+}
+
+#table-plane {
+    width: 1000px;
+    height: 1000px;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+        repeating-linear-gradient(45deg, #0d3b1b 0, #0d3b1b 10px, #0f4220 10px, #0f4220 20px);
+    /* Pattern */
+    background-color: #0b3318;
+    border: 15px solid #3e2614;
+    /* Table Frame */
+    border-radius: 20px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(45deg) rotateZ(0deg) translateY(-50px);
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+    transition: transform 0.5s;
+}
+
+/* Center Piece */
+#center-piece {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    background: #111;
+    border: 5px solid #444;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+#wind-indicator {
+    font-size: 60px;
+    color: #d4af37;
+    text-shadow: 0 0 10px #775500;
+}
+
+/* Player Zones - 3D Positioning */
+.zone {
+    position: absolute;
+    transform-style: preserve-3d;
+}
+
+/* Bottom (Me) */
+#zone-me {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateZ(40px);
+    /* Lifted slightly */
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#my-hand {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+/* Top (Opponent) */
+#zone-top {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) rotateZ(180deg);
+}
+
+/* Left (Opponent) */
+#zone-left {
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%) rotateZ(90deg);
+}
+
+/* Right (Opponent) */
+#zone-right {
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%) rotateZ(-90deg);
+}
+
+/* Discard Pools (Inside Table) */
+.discard-pool {
+    position: absolute;
+    width: 240px;
+    height: 160px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 2px;
+    transform-style: preserve-3d;
+}
+
+#pool-me {
+    bottom: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    justify-content: center;
+}
+
+#pool-top {
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%) rotateZ(180deg);
+    justify-content: center;
+}
+
+#pool-left {
+    left: 180px;
+    top: 50%;
+    transform: translateY(-50%) rotateZ(90deg);
+    justify-content: center;
+}
+
+#pool-right {
+    right: 180px;
+    top: 50%;
+    transform: translateY(-50%) rotateZ(-90deg);
+    justify-content: center;
+}
+
+/* 3D TILE CONSTRUCTION */
+/* A tile is a 3D box width=30, height=40, depth=20 */
+.tile-3d {
+    width: 34px;
+    height: 44px;
+    position: relative;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.tile-3d:hover {
+    transform: translateZ(10px);
+    /* Pop up */
+}
+
+/* Faces */
+.face {
+    position: absolute;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.t-front {
+    width: 34px;
+    height: 44px;
+    background: linear-gradient(135deg, #fff 0%, #eee 100%);
+    transform: rotateY(0deg) translateZ(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    color: #222;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.t-back {
+    width: 34px;
+    height: 44px;
+    background: #007700;
+    /* Green Back */
+    border: 2px solid white;
+    transform: rotateY(180deg) translateZ(10px);
+}
+
+.t-right {
+    width: 20px;
+    height: 44px;
+    background: #ddd;
+    transform: rotateY(90deg) translateZ(17px);
+}
+
+.t-left {
+    width: 20px;
+    height: 44px;
+    background: #ddd;
+    transform: rotateY(-90deg) translateZ(17px);
+}
+
+.t-top {
+    width: 34px;
+    height: 20px;
+    background: #eee;
+    transform: rotateX(90deg) translateZ(10px);
+}
+
+.t-bottom {
+    width: 34px;
+    height: 20px;
+    background: #ccc;
+    transform: rotateX(-90deg) translateZ(34px);
+}
+
+/* Standing Tile (In Hand) */
+.tile-standing {
+    transform: rotateX(10deg);
+    /* Tilt back slightly */
+    margin: 0 1px;
+}
+
+/* Laying Tile (Discard) */
+.tile-laying {
+    transform: rotateX(-90deg);
+    /* Flat on table */
+}
+
+/* Hand Backs (Opponents) standing */
+.tile-back-stand {
+    width: 34px;
+    height: 44px;
+    transform-style: preserve-3d;
+    transform: rotateX(10deg);
+}
+
+.tile-back-stand .t-front {
+    background: #007700;
+    border: 2px solid white;
+}
+
+/* Front is green for them */
+.tile-back-stand .t-back {
+    background: #eee;
+}
+
+/* HUD Overlay */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Let clicks throw */
+}
+
+#hud-controls {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    pointer-events: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.hud-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(#f00, #900);
+    border: 3px solid white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#msg-box {
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    text-align: center;
+    color: #ffd700;
+    font-size: 2em;
+    text-shadow: 0 2px 4px black;
+}

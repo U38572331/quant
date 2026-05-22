@@ -1,0 +1,29 @@
+Loading databento data... This may take a minute.
+Processing data...
+Running backtest strategy...
+Calculating strategy statistics manually...
+DEBUG Trade 2: Entry=20799.75 @ 2025-03-26 09:51:00-04:00, Exit=20799.50 @ 2025-03-26 09:53:00-04:00, Points=-0.25
+DEBUG Trade 3: Entry=17778.25 @ 2025-04-09 10:06:00-04:00, Exit=17625.00 @ 2025-04-09 10:59:00-04:00, Points=-153.25
+DEBUG Trade 4: Entry=18756.75 @ 2025-04-10 11:44:00-04:00, Exit=18750.25 @ 2025-04-10 11:50:00-04:00, Points=-6.50
+DEBUG Trade 5: Entry=19450.00 @ 2025-04-15 10:14:00-04:00, Exit=19425.00 @ 2025-04-15 10:18:00-04:00, Points=-25.00
+DEBUG Trade 6: Entry=19398.00 @ 2025-04-23 11:03:00-04:00, Exit=19373.00 @ 2025-04-23 11:23:00-04:00, Points=-25.00
+DEBUG Trade 7: Entry=19855.00 @ 2025-04-28 10:42:00-04:00, Exit=19811.50 @ 2025-04-28 11:22:00-04:00, Points=-43.50
+DEBUG Trade 8: Entry=20347.25 @ 2025-05-01 11:58:00-04:00, Exit=20324.75 @ 2025-05-01 12:16:00-04:00, Points=-22.50
+DEBUG Trade 9: Entry=21714.25 @ 2025-05-15 10:15:00-04:00, Exit=21711.25 @ 2025-05-15 10:16:00-04:00, Points=-3.00
+
+=== Backtest Statistics ===
+Total Trades: 86
+Win Rate: 33.72%
+Total Net PnL ($): 8471.73
+Average PnL per Trade ($): 98.51
+Average Win ($): 1398.31
+Average Loss ($): -562.80
+Profit Factor: 1.26
+Max Drawdown ($): 5987.03
+
+=== Audit Statistics ===
+Trades closed on exactly the same minute bar: 0
+Trades closed within 5 minutes: 32
+Average Trade Duration (Mins): 47.44
+Average Win Points (Raw): 69.92
+Average Loss Points (Raw): -28.14

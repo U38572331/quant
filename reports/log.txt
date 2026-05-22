@@ -1,0 +1,42 @@
+Traceback (most recent call last):
+Training XGBoost Models...
+Train Size: 1691
+Long Class Balance: {0: 1691}
+Short Class Balance: {0: 1691}
+  File "C:\Users\user\.gemini\antigravity\scratch\src\ml_strategy.py", line 218, in <module>
+    ml.train_models()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\user\.gemini\antigravity\scratch\src\ml_strategy.py", line 74, in train_models
+    model_long.fit(X_train, y_long_train)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python313\Lib\site-packages\xgboost\core.py", line 774, in inner_f
+    return func(**kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python313\Lib\site-packages\xgboost\sklearn.py", line 1806, in fit
+    self._Booster = train(
+                    ~~~~~^
+        params,
+        ^^^^^^^
+    ...<9 lines>...
+        callbacks=self.callbacks,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python313\Lib\site-packages\xgboost\core.py", line 774, in inner_f
+    return func(**kwargs)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python313\Lib\site-packages\xgboost\training.py", line 199, in train
+    bst.update(dtrain, iteration=i, fobj=obj)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python313\Lib\site-packages\xgboost\core.py", line 2433, in update
+    _check_call(
+    ~~~~~~~~~~~^
+        _LIB.XGBoosterUpdateOneIter(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            self.handle, ctypes.c_int(iteration), dtrain.handle
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        )
+        ^
+    )
+    ^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python313\Lib\site-packages\xgboost\core.py", line 323, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: [15:51:10] C:\actions-runner\_work\xgboost\xgboost\src\objective\regression_obj.cu:119: Check failed: is_valid: base_score must be in (0,1) for the logistic loss.

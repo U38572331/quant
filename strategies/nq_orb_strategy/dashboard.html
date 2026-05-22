@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NQ ORB Strategy Dashboard (Last Month)</title>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #131722;
+            color: #d1d4dc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #chart {
+            width: 100vw;
+            height: 90vh;
+        }
+
+        #controls {
+            height: 10vh;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid #2a2e39;
+        }
+
+        .stat-box {
+            padding: 5px 15px;
+            background: #2a2e39;
+            border-radius: 4px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 18px;
+            color: #ef5350;
+        }
+
+        /* Red for Short Strategy */
+    </style>
+</head>
+
+<body>
+    <div id="controls">
+        <h1>NQ Inverted ORB Strategy (Short Only) - Last Month Review</h1>
+        <div class="stat-box" id="info">Loading Data...</div>
+    </div>
+    <div id="chart"></div>
+
+    <script>
+        const statusDiv = document.getElementById('info');
+
+        function updateStatus(msg, color = 'white') {
+            statusDiv.innerHTML = `<span style="color:${color}">${msg}</span>`;
+            console.log(msg);
+        }
+
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim());
+
+            return lines.slice(1).map(line => {
+                const values = line.split(',');
+                let obj = {};
+                headers.forEach((h, i) => {
+                    obj[h] = values[i] ? values[i].trim() : '';
+                });
+                return obj;
+            });
+        }
+
+        async function loadData() {
+            try {
+                updateStatus("Step 1: Fetching Candle Data...");
+                const resp1 = await fetch('last_month_candle.csv');
+                if (!resp1.ok) throw new Error(`Failed to load candles: ${resp1.status}`);
+                const text1 = await resp1.text();
+
+                updateStatus(`Step 2: Parsing ${text1.length} bytes of Candle Data...`);
+                const candlesRaw = parseCSV(text1);
+
+                if (candlesRaw.length === 0) throw new Error("Candle CSV is empty");
+                console.log("First Candle:", candlesRaw[0]);
+
+                updateStatus("Step 3: Fetching Trade Data...");
+                const resp2 = await fetch('last_month_trades.csv');
+                if (!resp2.ok) throw new Error(`Failed to load trades: ${resp2.status}`);
+                const text2 = await resp2.text();
+                const tradesRaw = parseCSV(text2);
+                console.log("First Trade:", tradesRaw[0]);
+
+                updateStatus(`Step 4: Rendering Chart (Candles: ${candlesRaw.length}, Trades: ${tradesRaw.length})...`);
+                renderChart(candlesRaw, tradesRaw);
+
+                updateStatus(`Ready. Loaded ${candlesRaw.length} bars and ${tradesRaw.length} trades.`, '#4caf50');
+
+            } catch (e) {
+                updateStatus(`Error: ${e.message}`, '#ef5350');
+                console.error(e);
+            }
+        }
+
+        function renderChart(candles, trades) {
+            document.getElementById('chart').innerHTML = ''; // Clear previous
+
+            const chartContainer = document.getElementById('chart');
+            const chart = LightweightCharts.createChart(chartContainer, {
+                layout: { background: { color: '#131722' }, textColor: '#d1d4dc' },
+                grid: { vertLines: { color: '#2a2e39' }, horzLines: { color: '#2a2e39' } },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                timeScale: { timeVisible: true, secondsVisible: false }
+            });
+
+            const candleSeries = chart.addCandlestickSeries();
+            const vwapSeries = chart.addLineSeries({ color: 'orange', lineWidth: 2, title: 'VWAP' });
+            const upperSeries = chart.addLineSeries({ color: 'rgba(255, 0, 0, 0.5)', lineWidth: 1, lineStyle: 2, title: 'Upper Band' });
+            const lowerSeries = chart.addLineSeries({ color: 'rgba(255, 0, 0, 0.5)', lineWidth: 1, lineStyle: 2, title: 'Lower Band' });
+
+            const candleData = [];
+            const vwapData = [];
+            const upperData = [];
+            const lowerData = [];
+
+            // Detect timestamp column name
+            const keys = Object.keys(candles[0]);
+            // Prefer 'ts_event', fallback to first column
+            const tsKey = keys.includes('ts_event') ? 'ts_event' : keys[0];
+
+            candles.forEach(c => {
+                const tsStr = c[tsKey];
+                if (!tsStr) return;
+
+                const time = new Date(tsStr).getTime() / 1000;
+                if (isNaN(time)) return;
+
+                const open = parseFloat(c.open);
+                const high = parseFloat(c.high);
+                const low = parseFloat(c.low);
+                const close = parseFloat(c.close);
+
+                if (isNaN(open)) return;
+
+                candleData.push({ time, open, high, low, close });
+
+                // VWAP might be empty or nan
+                const vwap = parseFloat(c.rth_vwap);
+                if (!isNaN(vwap)) vwapData.push({ time, value: vwap });
+
+                const up = parseFloat(c.vwap_upper_1);
+                if (!isNaN(up)) upperData.push({ time, value: up });
+
+                const lowBand = parseFloat(c.vwap_lower_1);
+                if (!isNaN(lowBand)) lowerData.push({ time, value: lowBand });
+            });
+
+            candleSeries.setData(candleData);
+            vwapSeries.setData(vwapData);
+            upperSeries.setData(upperData);
+            lowerSeries.setData(lowerData);
+
+            // Markers
+            const markers = [];
+            trades.forEach(t => {
+                const tTime = new Date(t.EntryTime).getTime() / 1000;
+                if (isNaN(tTime)) return;
+
+                markers.push({
+                    time: tTime,
+                    position: 'aboveBar',
+                    color: '#ef5350',
+                    shape: 'arrowDown',
+                    text: 'SHORT @ ' + parseFloat(t.EntryPrice).toFixed(0)
+                });
+            });
+
+            candleSeries.setMarkers(markers);
+            chart.timeScale().fitContent();
+        }
+
+        loadData();
+    </script>
+</body>
+
+</html>

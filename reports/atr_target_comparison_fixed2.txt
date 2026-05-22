@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+Loading databento data... This may take a minute.
+Processing data...
+Pre-calculating 7-day ATR...
+  File "C:\Users\user\.gemini\antigravity\scratch\backtest_strategy.py", line 216, in <module>
+    df_temp['date'] = pd.to_datetime(df_temp.index.date).dt.tz_localize(None)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DatetimeIndex' object has no attribute 'dt'

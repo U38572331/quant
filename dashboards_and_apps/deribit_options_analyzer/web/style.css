@@ -1,0 +1,257 @@
+:root {
+    --bg-dark: #121212;
+    --bg-panel: #1e1e1e;
+    --text-main: #b0b0b0;
+    --text-bright: #ffffff;
+    --accent-orange: #ff9800;
+    /* GexStream Orange? Or Yellow/Gold */
+    --accent-gold: #ffd700;
+    --accent-green: #00e676;
+    --accent-red: #ff1744;
+    --accent-blue: #2979ff;
+    --border: #333;
+}
+
+body {
+    background-color: var(--bg-dark);
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Nav */
+nav {
+    height: 40px;
+    background-color: #1a1a1a;
+    border-bottom: 2px solid var(--accent-orange);
+    /* The top bar line */
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    justify-content: space-between;
+}
+
+.logo {
+    color: var(--text-bright);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+}
+
+.logo span {
+    color: var(--accent-orange);
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    align-items: center;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 13px;
+    text-transform: lowercase;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-links a.active {
+    color: var(--text-bright);
+    border-bottom: 2px solid var(--text-bright);
+    /* Dashboard underline */
+    margin-bottom: -2px;
+    /* Pull down to cover nav border */
+}
+
+/* Layout */
+.main-layout {
+    display: grid;
+    grid-template-columns: 35% 35% 30%;
+    gap: 5px;
+    padding: 5px;
+    flex: 1;
+    min-height: 0;
+    background-color: #121212;
+}
+
+.panel {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.panel-header {
+    text-align: center;
+    font-size: 12px;
+    text-transform: lowercase;
+    padding: 8px 0;
+    color: var(--text-bright);
+    font-weight: 500;
+}
+
+.sub-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.legend-call {
+    color: var(--accent-green);
+    margin-right: 5px;
+}
+
+.legend-put {
+    color: var(--accent-red);
+}
+
+.chart-container {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+}
+
+.watermark {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.03);
+    z-index: 0;
+}
+
+/* Right Panel */
+.right-panel {
+    background: transparent;
+    border: none;
+    gap: 5px;
+}
+
+.stats-box {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.ticker-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.ticker-header span:first-child {
+    background: #333;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.ticker-header .date {
+    font-family: 'Roboto Mono';
+    font-size: 12px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Roboto Mono';
+    font-size: 11px;
+}
+
+.heatmap-section {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header-small {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    font-size: 11px;
+    background: #252525;
+}
+
+.btn-3d {
+    background: #333;
+    border: 1px solid #555;
+    color: #ccc;
+    font-size: 9px;
+    cursor: pointer;
+}
+
+.chart-container-small {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+}
+
+.ai-feed {
+    height: 150px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-text {
+    padding: 10px;
+    font-size: 11px;
+    color: #888;
+    overflow-y: auto;
+    font-family: 'Roboto Mono';
+    line-height: 1.4;
+}
+
+/* Colors */
+.text-green {
+    color: var(--accent-green);
+}
+
+.text-red {
+    color: var(--accent-red);
+}
+
+.text-blue {
+    color: var(--accent-blue);
+}
+
+.text-yellow {
+    color: var(--accent-gold);
+}
+
+#connection-status {
+    color: var(--accent-green);
+    font-size: 10px;
+}

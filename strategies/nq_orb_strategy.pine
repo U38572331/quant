@@ -1,0 +1,121 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Antigravity
+
+//@version=5
+strategy("NQ ORB Strategy (ATR Risk) [Antigravity]", overlay=true, currency=currency.USD, default_qty_type=strategy.fixed, default_qty_value=1, initial_capital=100000)
+
+// ==== Inputs ====
+// Strategy Settings
+orbDuration = input.int(15, title="ORB Duration (minutes)", options=[15, 25])
+useLong = input.bool(true, title="Enable Long Trades")
+useShort = input.bool(true, title="Enable Short Trades")
+maxTradesPerDay = input.int(2, title="Max Trades Per Day", minval=1)
+
+// Risk Management (ATR)
+atrLength = input.int(10, title="ATR Length", minval=1)
+slMult = input.float(5.0, title="Stop Loss (ATR x)", step=0.1)
+tpMult = input.float(4.0, title="Take Profit (ATR x)", step=0.1)
+
+// Timezone
+marketZone = "America/New_York"
+sessDef = "0930-1600" 
+
+// ==== Date/Time Logic ====
+// Function to check if a new session day has started
+isNewDay() =>
+    d = dayofweek(time, marketZone)
+    isNew = d != d[1]
+    isNew
+
+// Session Timing
+// ORB Period: Open to Open + Duration
+// We construct the time strings dynamically
+openHour = 9
+openMinute = 30
+orbEndMinuteTotal = openMinute + orbDuration
+orbEndHour = openHour + math.floor(orbEndMinuteTotal / 60)
+orbEndMin = orbEndMinuteTotal % 60
+
+// Format time string "HHMM-HHMM"
+f_fmtTime(h, m) =>
+    str.format("{0,number,00}{1,number,00}", h, m)
+
+orbSessionString = f_fmtTime(openHour, openMinute) + "-" + f_fmtTime(orbEndHour, orbEndMin)
+
+// Check if we are inside the ORB formation period
+inOrbWindow = not na(time(timeframe.period, orbSessionString, marketZone))
+
+// Trading Window (After ORB end, until Market Close - e.g. 15:55)
+// tradeSessionString = f_fmtTime(orbEndHour, orbEndMin) + "-1555"
+// inTradeWindow = not na(time(timeframe.period, tradeSessionString, marketZone))
+// Actually, simplifies to:
+t = time(timeframe.period, "0930-1600", marketZone)
+isSession = not na(t)
+
+// ==== ORB Levels Calculation ====
+var float orbHigh = na
+var float orbLow = na
+var int dailyTradeCount = 0
+
+// Reset at start of new day
+if isNewDay()
+    dailyTradeCount := 0
+    orbHigh := na
+    orbLow := na
+
+// During ORB Window, track High/Low
+if inOrbWindow
+    if na(orbHigh)
+        orbHigh := high
+        orbLow := low
+    else
+        orbHigh := math.max(orbHigh, high)
+        orbLow := math.min(orbLow, low)
+
+// Visuals
+plot(inOrbWindow ? na : orbHigh, color=color.green, style=plot.style_linebr, linewidth=2, title="ORB High")
+plot(inOrbWindow ? na : orbLow, color=color.red, style=plot.style_linebr, linewidth=2, title="ORB Low")
+
+// ==== ATR Calculation ====
+atrVal = ta.atr(atrLength)
+
+// ==== Strategy Execution ====
+// Condition: ORB Window Finished AND Price Breaks Level
+// Note context: Strategy runs on "Close" of bar by default unless calc_on_every_tick=true.
+// For "Breakout", verifying Close > Level is safer.
+
+entryValid = not inOrbWindow and isSession and dailyTradeCount < maxTradesPerDay
+
+// Valid Breakout (Long)
+longCond = useLong and entryValid and close > orbHigh and strategy.position_size == 0
+if longCond and not na(orbHigh)
+    // Calculate Risk
+    // Fixed SL/TP based on Entry ATR
+    // Strategy Entry happens on Open of NEXT bar (market). 
+    // We use CURRENT bar's close/ATR for calculation logic reference.
+    
+    slPrice = close - (atrVal * slMult)
+    tpPrice = close + (atrVal * tpMult)
+    
+    strategy.entry("Long", strategy.long, comment="ORB Long")
+    strategy.exit("Exit Long", "Long", stop=slPrice, limit=tpPrice)
+    dailyTradeCount += 1
+
+// Valid Breakdown (Short)
+shortCond = useShort and entryValid and close < orbLow and strategy.position_size == 0
+if shortCond and not na(orbLow)
+    slPrice = close + (atrVal * slMult)
+    tpPrice = close - (atrVal * tpMult)
+    
+    strategy.entry("Short", strategy.short, comment="ORB Short")
+    strategy.exit("Exit Short", "Short", stop=slPrice, limit=tpPrice)
+    dailyTradeCount += 1
+
+// Force Close at End of Day (15:55 ET)
+eodTime = not na(time(timeframe.period, "1555-1600", marketZone))
+if eodTime
+    strategy.close_all(comment="EOD Close")
+    
+// ==== Plotting Trades for Debug ====
+plotshape(longCond, title="Long Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small)
+plotshape(shortCond, title="Short Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small)

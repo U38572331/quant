@@ -1,0 +1,14 @@
+Loading databento data... This may take a minute.
+Processing data...
+Running backtest strategy...
+Calculating strategy statistics manually...
+
+=== Backtest Statistics ===
+Total Trades: 867
+Win Rate: 93.77%
+Total Net PnL ($): 13442982.96
+Average PnL per Trade ($): 15505.17
+Average Win ($): 16554.97
+Average Loss ($): -300.11
+Profit Factor: 830.50
+Max Drawdown ($): 2337.26

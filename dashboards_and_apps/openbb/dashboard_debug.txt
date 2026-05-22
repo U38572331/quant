@@ -1,0 +1,19 @@
+Launching dashboard from C:\Users\user\AppData\Local\Temp\_MEI608362\dashboard.py
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.10:8501
+
+  Stopping...
+2026-01-01 11:20:17.171 Uncaught exception GET /_stcore/stream (::1)
+HTTPServerRequest(protocol='http', host='localhost:8501', method='GET', uri='/_stcore/stream', version='HTTP/1.1', remote_ip='::1')
+Traceback (most recent call last):
+  File "tornado\websocket.py", line 659, in _run_callback
+  File "streamlit\web\server\browser_websocket_handler.py", line 268, in on_message
+    self._runtime.handle_backmsg(self._session_id, msg)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "streamlit\runtime\runtime.py", line 502, in handle_backmsg
+    raise RuntimeStoppedError(f"Can't handle_backmsg (state={self._state})")
+streamlit.runtime.runtime.RuntimeStoppedError: Can't handle_backmsg (state=RuntimeState.STOPPING)
+2026-01-01 11:20:17.445 503 GET /_stcore/health (::1) 0.32ms

@@ -1,0 +1,31 @@
+C:\Users\user\.gemini\antigravity\scratch\backtest_strategy.py:272: FutureWarning:
+
+'M' is deprecated and will be removed in a future version, please use 'ME' instead.
+
+C:\Users\user\.gemini\antigravity\scratch\backtest_strategy.py:304: FutureWarning:
+
+'Y' is deprecated and will be removed in a future version, please use 'YE' instead.
+
+Loading databento data... This may take a minute.
+Processing data...
+Running backtest strategy...
+Calculating professional statistics...
+
+=== Professional Backtest Statistics (1:3 RR) ===
+Total Trades: 640
+Win Rate: 29.06%
+Total Net Profit: $52,944.62
+Max Drawdown: $7,696.88
+Profit Factor: 1.24
+Sharpe Ratio: 0.79
+Sortino Ratio: 1.93
+Expectancy: $82.73 per trade
+Avg Win: $1479.00 / Avg Loss: $-489.32
+Max Consecutive Losses: 12
+
+=== Yearly PnL Breakdown ===
+2021: $5,190.15
+2022: $13,954.30
+2023: $9,427.32
+2024: $7,253.52
+2025: $17,119.33

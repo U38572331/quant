@@ -1,0 +1,6 @@
+Total Trades: 55630
+Win Rate: 16.53%
+Average Win: 0.3404%
+Average Loss: -0.0618%
+Profit Factor: 1.09
+Max DD: -21.18%

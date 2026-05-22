@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Debugger</title>
+    <style>
+        body {
+            background: #111;
+            color: #0f0;
+            font-family: monospace;
+            padding: 20px;
+        }
+
+        .success {
+            color: #0f0;
+        }
+
+        .error {
+            color: #f00;
+        }
+
+        pre {
+            background: #222;
+            padding: 10px;
+            border: 1px solid #444;
+            overflow: auto;
+            max-height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>API Connection Test</h1>
+    <div id="status">Testing...</div>
+
+    <h2>1. Search Markets (/api/search)</h2>
+    <pre id="search-output">Loading...</pre>
+
+    <h2>2. Market Data Sample</h2>
+    <div id="data-section"></div>
+
+    <script>
+        const API = 'http://127.0.0.1:8000/api';
+
+        async function runTest() {
+            try {
+                // Test Search
+                const r1 = await fetch(`${API}/search`);
+                if (!r1.ok) throw new Error(`Search failed: ${r1.status}`);
+                const markets = await r1.json();
+
+                document.getElementById('search-output').textContent =
+                    `Success! Found ${markets.length} markets.\n` +
+                    `First 3:\n${JSON.stringify(markets.slice(0, 3), null, 2)}`;
+
+                // Test Data
+                if (markets.length > 0) {
+                    const code = markets[0].cftc_contract_market_code;
+                    const name = markets[0].market_and_exchange_names;
+
+                    const r2 = await fetch(`${API}/data/${code}`);
+                    if (!r2.ok) throw new Error(`Data failed: ${r2.status}`);
+                    const data = await r2.json();
+
+                    document.getElementById('data-section').innerHTML = `
+                        <h3>Data for ${name} (${code})</h3>
+                        <pre>${JSON.stringify(data.slice(0, 3), null, 2)}\n...\n(Total ${data.length} records)</pre>
+                    `;
+
+                    document.getElementById('status').innerHTML = "<h2 class='success'>SYSTEM ONLINE - DATA FLOWING</h2>";
+                }
+
+            } catch (e) {
+                document.getElementById('status').innerHTML = `<h2 class='error'>SYSTEM FAILURE: ${e.message}</h2>`;
+                document.getElementById('search-output').textContent = e.stack;
+            }
+        }
+
+        runTest();
+    </script>
+</body>
+
+</html>

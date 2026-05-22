@@ -1,0 +1,28 @@
+Testing Nasdaq Consolidated (Old Link) (Code: 20974+)...
+  URL: https://publicreporting.cftc.gov/resource/6dca-aqww.json?cftc_contract_market_code='20974%2B'&$limit=5
+  Status: 200
+  Rows Found: 5
+  Sample Date: 2022-09-13T00:00:00.000
+  ERROR: 'cp950' codec can't encode character '\u2705' in position 10: illegal multibyte sequence
+--------------------------------------------------
+Testing Nasdaq E-Mini (New Link) (Code: 209742)...
+  URL: https://publicreporting.cftc.gov/resource/6dca-aqww.json?cftc_contract_market_code='209742'&$limit=5
+  Status: 200
+  Rows Found: 5
+  Sample Date: 2022-09-13T00:00:00.000
+  ERROR: 'cp950' codec can't encode character '\u2705' in position 10: illegal multibyte sequence
+--------------------------------------------------
+Testing Bitcoin (Code: 133741)...
+  URL: https://publicreporting.cftc.gov/resource/6dca-aqww.json?cftc_contract_market_code='133741'&$limit=5
+  Status: 200
+  Rows Found: 5
+  Sample Date: 2022-09-13T00:00:00.000
+  ERROR: 'cp950' codec can't encode character '\u2705' in position 10: illegal multibyte sequence
+--------------------------------------------------
+Testing Gold (Code: 088691)...
+  URL: https://publicreporting.cftc.gov/resource/6dca-aqww.json?cftc_contract_market_code='088691'&$limit=5
+  Status: 200
+  Rows Found: 5
+  Sample Date: 2022-09-13T00:00:00.000
+  ERROR: 'cp950' codec can't encode character '\u2705' in position 10: illegal multibyte sequence
+--------------------------------------------------

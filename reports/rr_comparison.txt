@@ -1,0 +1,27 @@
+Loading databento data... This may take a minute.
+Processing data...
+Comparing Risk-Reward Ratios (1:1, 1:2, 1:3)...
+
+[RR 1:1]
+  Profit: 38,548.39
+  Trades: 643.00
+  WinRate: 54.12
+  PF: 1.27
+  MaxDD: 5,773.43
+  Sharpe: 1.01
+
+[RR 1:2]
+  Profit: 34,468.07
+  Trades: 641.00
+  WinRate: 35.73
+  PF: 1.17
+  MaxDD: 9,541.91
+  Sharpe: 0.62
+
+[RR 1:3]
+  Profit: 52,944.62
+  Trades: 640.00
+  WinRate: 29.06
+  PF: 1.24
+  MaxDD: 7,696.88
+  Sharpe: 0.79

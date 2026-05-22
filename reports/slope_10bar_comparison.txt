@@ -1,0 +1,19 @@
+Loading databento data... This may take a minute.
+Processing data...
+Comparing VWAP 10-bar Slope Filter...
+
+[Standard (No Slope)]
+  Profit: 52,944.62
+  Trades: 640.00
+  WinRate: 29.06
+  PF: 1.24
+  MaxDD: 7,696.88
+  Sharpe: 0.79
+
+[Bullish 10-bar VWAP Slope Only]
+  Profit: 53,507.80
+  Trades: 640.00
+  WinRate: 29.22
+  PF: 1.24
+  MaxDD: 7,756.07
+  Sharpe: 0.80

@@ -1,0 +1,66 @@
+DEBUG: Patching provider_interface...
+DEBUG: Entry points found: 77
+DEBUG: Group openbb_core_extension: 16 entries
+DEBUG: Sample: EntryPoint(name='commodity', value='openbb_commodity.commodity_router:router', group='openbb_core_extension')
+DEBUG: Group openbb_provider_extension: 33 entries
+DEBUG: Sample: EntryPoint(name='alpha_vantage', value='openbb_alpha_vantage:alpha_vantage_provider', group='openbb_provider_extension')
+DEBUG: Group openbb_obbject_extension: 1 entries
+DEBUG: Sample: EntryPoint(name='openbb_charting', value='openbb_charting:ext', group='openbb_obbject_extension')
+DEBUG: Successfully injected 191 dynamic OBBject types.
+DEBUG: Keys: ['EquityHistorical', 'HistoricalEps', 'EtfHistorical', 'AnalystSearch', 'CompanyNews', 'WorldNews', 'PriceTarget', 'BlsSearch', 'BlsSeries', 'AvailableIndices', 'EquityQuote', 'EquitySearch', 'IndexConstituents', 'FuturesCurve', 'IndexHistorical', 'IndexSearch', 'IndexSnapshots', 'OptionsChains', 'COT', 'COTSearch', 'CongressBills', 'CongressBillInfo', 'CongressBillText', 'FuturesHistorical', 'FuturesInfo', 'FuturesInstruments', 'BalanceOfPayments', 'CurrencyReferenceRates', 'YieldCurve', 'AvailableIndicators', 'CountryProfile', 'EconomicIndicators', 'ExportDestinations', 'GdpNominal', 'GdpReal', 'PortVolume', 'FamaFrenchBreakpoints', 'FamaFrenchCountryPortfolioReturns', 'FamaFrenchFactors', 'FamaFrenchInternationalIndexReturns', 'FamaFrenchRegionalPortfolioReturns', 'FamaFrenchUSPortfolioReturns', 'CentralBankHoldings', 'FederalFundsRate', 'FomcDocuments', 'MoneyMeasures', 'OvernightBankFundingRate', 'PrimaryDealerFails', 'PrimaryDealerPositioning', 'SOFR', 'TreasuryRates', 'OTCAggregate', 'EquityShortInterest', 'CompareGroups', 'EtfPricePerformance', 'EquityInfo', 'EquityScreener', 'KeyMetrics', 'PricePerformance', 'AnalystEstimates', 'BalanceSheet', 'BalanceSheetGrowth', 'CalendarDividend', 'CalendarEarnings', 'CalendarEvents', 'CalendarIpo', 'CalendarSplits', 'CashFlowStatement', 'CashFlowStatementGrowth', 'CompanyFilings', 'CryptoHistorical', 'CryptoSearch', 'CurrencyHistorical', 'CurrencyPairs', 'CurrencySnapshots', 'DiscoveryFilings', 'EarningsCallTranscript', 'EconomicCalendar', 'EquityActive', 'EquityOwnership', 'EquityPeers', 'EquityGainers', 'EquityLosers', 'EsgScore', 'EtfCountries', 'EtfEquityExposure', 'EtfHoldings', 'EtfInfo', 'EtfSearch', 'EtfSectors', 'ExecutiveCompensation', 'FinancialRatios', 'ForwardEbitdaEstimates', 'ForwardEpsEstimates', 'HistoricalDividends', 'HistoricalEmployees', 'HistoricalMarketCap', 'HistoricalSplits', 'IncomeStatement', 'IncomeStatementGrowth', 'InsiderTrading', 'InstitutionalOwnership', 'KeyExecutives', 'MarketSnapshots', 'NportDisclosure', 'PriceTargetConsensus', 'RevenueBusinessLine', 'RevenueGeographic', 'RiskPremium', 'ShareStatistics', 'GovernmentTrades', 'BondIndices', 'CommoditySpotPrices', 'ConsumerPriceIndex', 'EuroShortTermRate', 'SONIA', 'Ameribor', 'PROJECTIONS', 'IORB', 'DiscountWindowPrimaryCreditRate', 'EuropeanCentralBankInterestRates', 'ManufacturingOutlookNY', 'ManufacturingOutlookTexas', 'MortgageIndices', 'NonFarmPayrolls', 'PersonalConsumptionExpenditures', 'CommercialPaper', 'FredReleaseTable', 'FredSearch', 'FredSeries', 'FredRegional', 'RetailPrices', 'SeniorLoanOfficerSurvey', 'SpotRate', 'HighQualityMarketCorporateBond', 'TreasuryConstantMaturity', 'SelectedTreasuryConstantMaturity', 'SelectedTreasuryBill', 'SurveyOfEconomicConditionsChicago', 'TipsYields', 'UniversityOfMichigan', 'TreasuryAuctions', 'TreasuryPrices', 'DirectionOfTrade', 'MaritimeChokePointInfo', 'MaritimeChokePointVolume', 'PortInfo', 'ForwardPeEstimates', 'ForwardSalesEstimates', 'HistoricalAttributes', 'LatestAttributes', 'OptionsSnapshots', 'OptionsUnusual', 'ReportedFinancials', 'SearchAttributes', 'SP500Multiples', 'TopRetail', 'CompositeLeadingIndicator', 'CountryInterestRates', 'GdpForecast', 'HousePriceIndex', 'SharePriceIndex', 'Unemployment', 'EquityNBBO', 'CikMap', 'CompareCompanyFacts', 'EquityFTD', 'Filings', 'Form13FHR', 'SecHtmFile', 'InstitutionsSearch', 'LatestFinancialReports', 'ManagementDiscussionAnalysis', 'RssLitigation', 'SchemaFiles', 'SecFiling', 'SicSearch', 'SymbolMap', 'ShortVolume', 'TrailingDividendYield', 'BondPrices', 'IndexSectors', 'PetroleumStatusReport', 'ShortTermEnergyOutlook', 'ETFGainers', 'ETFLosers', 'ETFActive', 'EquityAggressiveSmallCaps', 'EquityUndervaluedGrowth', 'EquityUndervaluedLargeCaps', 'GrowthTechEquities']
+DEBUG: Module attributes (sample): ['Annotated', 'Any', 'BaseModel', 'Body', 'Callable', 'ConfigDict', 'DataclassField', 'Dict', 'Discriminator', 'ExtraData', 'ExtraParams', 'Field', 'FieldInfo', 'List', 'Literal', 'MapType', 'OBBject', 'OBBject_Ameribor', 'OBBject_AnalystEstimates', 'OBBject_AnalystSearch']
+Loading...
+
+
+Welcome to OpenBB Platform CLI v1.2.0
+┌─────────────────────────────────── Home ────────────────────────────────────┐
+│                                                                             │
+│ Configure the platform and manage your account:                             │
+│ >   account                                                                 │
+│     system                                                                  │
+│     user                                                                    │
+│                                                                             │
+│ Configure your CLI:                                                         │
+│ >   settings                   enable and disable feature flags, preference │
+│                                                                             │
+│ Record and execute your own .openbb routine scripts:                        │
+│     record                     start recording current session              │
+│     stop                       stop session recording and convert to .openb │
+│     exe                        execute .openbb routine scripts (use exe --e │
+│                                                                             │
+│ Retrieve data from different asset classes and providers:                   │
+│ >   commodity                  commodity market data                        │
+│ >   crypto                     cryptocurrency market data                   │
+│ >   currency                   foreign exchange (fx) market data            │
+│ >   derivatives                derivatives market data                      │
+│ >   economy                    economic data                                │
+│ >   equity                     equity market data                           │
+│ >   etf                        exchange traded funds market data            │
+│ >   famafrench                 fama-french research factors and portfolios  │
+│ >   fixedincome                fixed income market data                     │
+│ >   index                      indices data                                 │
+│ >   news                       financial market news data                   │
+│ >   regulators                 financial market regulators data             │
+│ >   uscongress                 data connector to congress                   │
+│                                                                             │
+│ Analyze and process previously obtained data:                               │
+│ >   econometrics               econometrics analysis tools                  │
+│ >   quantitative               quantitative analysis tools                  │
+│ >   technical                  technical analysis tools                     │
+│                                                                             │
+│     results                                                                 │
+│                                                                             │
+└──────────────────────────── OpenBB Platform CLI v1.2.0 (https://openbb.co) ─┘
+2025 Dec 31, 21:35 (🦋) / $ 
+Thank you for using the OpenBB Platform CLI and being part of this journey.
+
+We hope you'll find the new OpenBB Platform CLI a valuable tool.
+
+To stay tuned, sign up for our newsletter: https://openbb.co/newsletter.
+
+Please feel free to check out our other products:
+
+OpenBB Workspace:    https://openbb.co
+OpenBB Platform:     https://docs.openbb.co/platform
+OpenBB Bot:          https://docs.openbb.co/bot
+    

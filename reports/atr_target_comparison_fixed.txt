@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "C:\Users\user\.gemini\antigravity\scratch\backtest_strategy.py", line 218, in <module>
+Loading databento data... This may take a minute.
+Processing data...
+Pre-calculating 7-day ATR...
+    df_temp = df_temp.merge(daily_data[['atr7']], left_on='date', right_index=True, how='left')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 10859, in merge
+    return merge(
+           ^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\reshape\merge.py", line 170, in merge
+    op = _MergeOperation(
+         ^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\reshape\merge.py", line 807, in __init__
+    self._maybe_coerce_merge_keys()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\reshape\merge.py", line 1523, in _maybe_coerce_merge_keys
+    raise ValueError(msg)
+ValueError: You are trying to merge on datetime64[ns] and datetime64[ns, America/New_York] columns for key 'date'. If you wish to proceed you should use pd.concat

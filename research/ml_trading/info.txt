@@ -1,0 +1,15 @@
+All Columns: ['ts_event', 'rtype', 'publisher_id', 'instrument_id', 'open', 'high', 'low', 'close', 'volume', 'symbol']
+Unique Instruments in sample: [ 6641 26715]
+Dtypes:
+ts_event          object
+rtype              int64
+publisher_id       int64
+instrument_id      int64
+open             float64
+high             float64
+low              float64
+close            float64
+volume             int64
+symbol            object
+dtype: object
+First row: {'ts_event': '2010-06-06T22:00:00.000000000Z', 'rtype': 33, 'publisher_id': 1, 'instrument_id': 6641, 'open': 1831.75, 'high': 1831.75, 'low': 1828.75, 'close': 1829.0, 'volume': 117, 'symbol': 'NQM0'}

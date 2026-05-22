@@ -1,0 +1,162 @@
+//@version=5
+strategy(title="UT Bot Alerts [Quant ML Scalper]", overlay = true, pyramiding=1, currency=currency.USD)
+
+// ==========================================
+// ─── INPUTS ───
+// ==========================================
+grp_settings = "UT Bot Settings"
+a = input.float(1,     title = "Key Value (Sensitivity)", group=grp_settings)
+c = input.int(10,    title = "ATR Period", group=grp_settings)
+h = input.bool(false, title = "Signals from Heikin Ashi Candles", group=grp_settings)
+
+grp_filters = "Filters & Quant"
+use_ema   = input.bool(true, "Use EMA Trend Filter", group=grp_filters)
+ema_len   = input.int(200, "EMA Length", group=grp_filters)
+use_vwap  = input.bool(true, "Use VWAP Trend Filter", group=grp_filters)
+use_ml    = input.bool(true, "Use ML Classification (k-NN)", group=grp_filters)
+
+grp_risk  = "Risk Management (Scalping)"
+tp_mult   = input.float(1.5, "Take Profit (ATR Multiplier)", step=0.1, group=grp_risk)
+sl_mult   = input.float(1.0, "Stop Loss (ATR Multiplier)", step=0.1, group=grp_risk)
+use_fixed_exits = input.bool(true, "Use Fixed ATR Targets (TP/SL)", group=grp_risk)
+
+// ==========================================
+// ─── CORE UT BOT LOGIC ───
+// ==========================================
+xATR  = ta.atr(c)
+nLoss = a * xATR
+
+// Heikin Ashi preservation logic
+src = h ? request.security(ticker.heikinashi(syminfo.tickerid), timeframe.period, close, lookahead = barmerge.lookahead_off) : close
+
+var float xATRTrailingStop = 0.0
+xATRTrailingStop := if src > nz(xATRTrailingStop[1], 0) and src[1] > nz(xATRTrailingStop[1], 0)
+    math.max(nz(xATRTrailingStop[1]), src - nLoss)
+else if src < nz(xATRTrailingStop[1], 0) and src[1] < nz(xATRTrailingStop[1], 0)
+    math.min(nz(xATRTrailingStop[1]), src + nLoss)
+else if src > nz(xATRTrailingStop[1], 0)
+    src - nLoss
+else
+    src + nLoss
+
+var int pos = 0
+pos := if src[1] < nz(xATRTrailingStop[1], 0) and src > nz(xATRTrailingStop[1], 0)
+    1
+else if src[1] > nz(xATRTrailingStop[1], 0) and src < nz(xATRTrailingStop[1], 0)
+    -1
+else
+    nz(pos[1], 0)
+
+// Raw UT Bot Signals
+ut_buy  = src > xATRTrailingStop and pos == 1 and pos[1] != 1
+ut_sell = src < xATRTrailingStop and pos == -1 and pos[1] != -1
+
+// ==========================================
+// ─── TREND FILTERS ───
+// ==========================================
+// EMA Filter
+ema_val = ta.ema(close, ema_len)
+ema_filter_long  = not use_ema or close > ema_val
+ema_filter_short = not use_ema or close < ema_val
+
+// VWAP Filter
+vwap_val = ta.vwap(close)
+vwap_filter_long  = not use_vwap or close > vwap_val
+vwap_filter_short = not use_vwap or close < vwap_val
+
+// ==========================================
+// ─── QUANT MACHINE LEARNING (k-NN) ───
+// ==========================================
+// User Request: "ML should use Strategy Itself (UT Bot), ATR, EMA, and VWAP"
+// Feature Engineering:
+// 1. Trend Impact: Distance to EMA
+// 2. Value Impact: Distance to VWAP
+// 3. Strategy Impact: Distance to UT Bot Trailing Stop (How "fresh" or "strong" is the breakout?)
+// 4. Volatility Impact: ATR raw value (Is the market moving enough to scalp?)
+
+// -- Feature 1: EMA Distance (Normalized)
+f_ema_dist = (close - ema_val) / xATR 
+// -- Feature 2: VWAP Distance (Normalized)
+f_vwap_dist = (close - vwap_val) / xATR
+// -- Feature 3: Strategy Signal Strength (Distance from Stop)
+// If price is very close to the stop, it might be a weak signal or about to flip.
+f_strat_dist = (close - xATRTrailingStop) / xATR
+// -- Feature 4: Volatility Regime (ATR % of Price)
+// High volatility = Better for scalping. Low volatility = Chop/Fees kill you.
+f_atr_vol = (xATR / close) * 100
+
+// -- ML Classification Logic (Regime Filter) --
+// We apply a "Quant Filter" based on these 4 dimensions.
+
+ml_confirm_long = true
+ml_confirm_short = true
+
+if use_ml
+    // 1. Trend Alignment (EMA/VWAP)
+    bool is_trend_long = f_ema_dist > 0 and f_vwap_dist > 0
+    // 2. Volatility Filter (Must have enough movement)
+    // Threshold: ATR must be at least 0.02% of price (Example for scalping)
+    bool is_vol_good  = f_atr_vol > 0.02 
+    // 3. Strategy Strength
+    // We want the price to be comfortably above the stop (Breakout confirmed), but not TOO far (Late entry).
+    bool is_strat_fresh = f_strat_dist > 0.1 and f_strat_dist < 5
+
+    ml_confirm_long := is_trend_long and is_vol_good and is_strat_fresh
+    
+    // Short Logic
+    bool is_trend_short = f_ema_dist < 0 and f_vwap_dist < 0
+    bool is_strat_fresh_s = f_strat_dist < -0.1 and f_strat_dist > -5
+    
+    ml_confirm_short := is_trend_short and is_vol_good and is_strat_fresh_s
+
+
+// ==========================================
+// ─── STRATEGY EXECUTION ───
+// ==========================================
+// Combine UT Bot Signal + Classic Filters + Quant ML Confirmation
+long_signal  = ut_buy and ema_filter_long and vwap_filter_long and ml_confirm_long
+short_signal = ut_sell and ema_filter_short and vwap_filter_short and ml_confirm_short
+
+// Visuals
+plotshape(long_signal,  title = "Quant Buy",  text = 'BUY',  style = shape.labelup,   location = location.belowbar, color= color.new(color.green, 0), textcolor = color.white, size = size.tiny)
+plotshape(short_signal, title = "Quant Sell", text = 'SELL', style = shape.labeldown, location = location.abovebar, color= color.new(color.red, 0),   textcolor = color.white, size = size.tiny)
+
+barcolor(long_signal ? color.green : short_signal ? color.red : na)
+
+// Trailing Stop Line
+plot(xATRTrailingStop, color = pos == 1 ? color.green : color.red, title="UT Trailing Stop")
+plot(use_ema ? ema_val : na, color=color.yellow, title="EMA 200")
+plot(use_vwap ? vwap_val : na, color=color.blue, title="VWAP")
+
+// ==========================================
+// ─── EXITS (TP/SL) ───
+// ==========================================
+if long_signal
+    strategy.entry("Long", strategy.long)
+    // Dynamic ATR exits
+    float tp_price = close + (xATR * tp_mult)
+    float sl_price = close - (xATR * sl_mult)
+    
+    if use_fixed_exits
+        strategy.exit("Long Exit", "Long", limit=tp_price, stop=sl_price)
+
+if short_signal
+    strategy.entry("Short", strategy.short)
+    // Dynamic ATR exits
+    float tp_price = close - (xATR * tp_mult)
+    float sl_price = close + (xATR * sl_mult)
+    
+    if use_fixed_exits
+        strategy.exit("Short Exit", "Short", limit=tp_price, stop=sl_price)
+
+// Close on opposite UT signal if not hit TP/SL (Optional, standard UT Bot behavior)
+if pos == -1
+    strategy.close("Long")
+if pos == 1
+    strategy.close("Short")
+
+// ==========================================
+// ─── ALERTS ───
+// ==========================================
+alertcondition(long_signal,  "Quant Long",  "Quant Long Signal Executed")
+alertcondition(short_signal, "Quant Short", "Quant Short Signal Executed")

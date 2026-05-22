@@ -1,0 +1,15 @@
+directories:
+  output: dist-new-v2
+  buildResources: build
+appId: com.u3.draw
+productName: U3 Draw
+asar: false
+files:
+  - filter:
+      - app/**/*
+      - main.js
+win:
+  target:
+    - nsis
+    - portable
+electronVersion: 39.2.7

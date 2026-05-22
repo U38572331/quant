@@ -1,0 +1,7 @@
+Total Trades|3463
+Win Rate|17.82%
+Profit Factor|0.00
+Expectancy|-6328.97 Points
+Max Drawdown|-21915370.40 Points
+Sharpe Ratio|-13.22
+Sortino Ratio|-13.01

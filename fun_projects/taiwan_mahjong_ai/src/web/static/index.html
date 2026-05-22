@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Taiwan Mahjong AI 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Embed font logic if needed */
+        @font-face {
+            font-family: 'Segoe UI Emoji';
+            src: local('Segoe UI Emoji');
+        }
+
+        .t-front {
+            font-family: 'Segoe UI Emoji', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 3D Scene -->
+    <div id="game-stage">
+        <div id="table-plane">
+            <!-- Center -->
+            <div id="center-piece">
+                <div id="wind-indicator">東</div>
+            </div>
+
+            <!-- Discard Pools -->
+            <div id="pool-me" class="discard-pool"></div>
+            <div id="pool-right" class="discard-pool"></div>
+            <div id="pool-top" class="discard-pool"></div>
+            <div id="pool-left" class="discard-pool"></div>
+
+            <!-- Player Zones (Hands) -->
+            <!-- Me -->
+            <div id="zone-me" class="zone">
+                <div id="my-hand"></div>
+            </div>
+
+            <!-- Right -->
+            <div id="zone-right" class="zone">
+                <div id="hand-right" class="hand-line"></div>
+            </div>
+
+            <!-- Top -->
+            <div id="zone-top" class="zone">
+                <div id="hand-top" class="hand-line"></div>
+            </div>
+
+            <!-- Left -->
+            <div id="zone-left" class="zone">
+                <div id="hand-left" class="hand-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HUD Overlay -->
+    <div id="hud">
+        <div id="msg-box">Waiting for Game...</div>
+        <div id="hud-controls">
+            <!-- Placeholders for actions -->
+            <button class="hud-btn" onclick="resetGame()">RESTART</button>
+            <button class="hud-btn">HU</button>
+            <button class="hud-btn">PONG</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

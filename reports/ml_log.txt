@@ -1,0 +1,20 @@
+
+--- Strategy Optimization ---
+Best Raw Configuration (Train Set): SL=ATR_1.0, TP=10.0R
+
+ML Performance on Test Set (Best Config):
+              precision    recall  f1-score   support
+
+           0       0.88      0.96      0.92        54
+           1       0.00      0.00      0.00         7
+
+    accuracy                           0.85        61
+   macro avg       0.44      0.48      0.46        61
+weighted avg       0.78      0.85      0.81        61
+
+Precision for WIN: 0.0000
+
+Feature Importance:
+ORBHeight: 0.3213
+ATR: 0.3141
+GridVolume: 0.3646

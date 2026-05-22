@@ -1,0 +1,19 @@
+C:\Users\user\.gemini\antigravity\scratch\nq_orb_backtest\generate_advanced_quant_report.py:15: FutureWarning: In a future version of pandas, parsing datetimes with mixed time zones will raise an error unless `utc=True`. Please specify `utc=True` to opt in to the new behaviour and silence this warning. To create a `Series` with mixed offsets and `object` dtype, please use `apply` and `datetime.datetime.strptime`
+  df['EntryTime'] = pd.to_datetime(df['EntryTime'])
+C:\Users\user\.gemini\antigravity\scratch\nq_orb_backtest\generate_advanced_quant_report.py:16: FutureWarning: In a future version of pandas, parsing datetimes with mixed time zones will raise an error unless `utc=True`. Please specify `utc=True` to opt in to the new behaviour and silence this warning. To create a `Series` with mixed offsets and `object` dtype, please use `apply` and `datetime.datetime.strptime`
+  df['ExitTime'] = pd.to_datetime(df['ExitTime'])
+Traceback (most recent call last):
+  File "C:\Users\user\.gemini\antigravity\scratch\nq_orb_backtest\generate_advanced_quant_report.py", line 164, in <module>
+    generate_advanced_report()
+  File "C:\Users\user\.gemini\antigravity\scratch\nq_orb_backtest\generate_advanced_quant_report.py", line 17, in generate_advanced_report
+    df['Duration_Mins'] = (df['ExitTime'] - df['EntryTime']).dt.total_seconds() / 60.0
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\generic.py", line 6321, in __getattr__
+    return object.__getattribute__(self, name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\accessor.py", line 224, in __get__
+    accessor_obj = self._accessor(obj)
+                   ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\accessors.py", line 643, in __new__
+    raise AttributeError("Can only use .dt accessor with datetimelike values")
+AttributeError: Can only use .dt accessor with datetimelike values. Did you mean: 'at'?

@@ -1,0 +1,119 @@
+/* MODAL STYLES (Append to style.css) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    display: none;
+    /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: #0a0a12;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    width: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    background: rgba(0, 240, 255, 0.1);
+    padding: 15px 20px;
+    font-family: var(--font-heading);
+    color: var(--primary);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    color: #fff;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.modal-footer {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+button.btn-cancel {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    padding: 8px 15px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+button.btn-confirm {
+    background: var(--primary);
+    border: none;
+    color: #000;
+    font-weight: bold;
+    padding: 8px 20px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    font-size: 0.8rem;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+}
+
+button.btn-confirm:hover {
+    background: #fff;
+}

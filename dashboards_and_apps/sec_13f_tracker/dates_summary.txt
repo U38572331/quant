@@ -1,0 +1,23 @@
+Unique Filing Dates per Fund:
+                          Fund  FilingDate  HoldingsCount
+9         Greenlight (Einhorn)  2024-02-14            116
+2              Baillie Gifford  2025-10-31            905
+15       Scion (Michael Burry)  2025-11-03              8
+0     ARK Invest (Cathie Wood)  2025-11-12            196
+1           Appaloosa (Tepper)  2025-11-13             45
+4          Bridgewater (Dalio)  2025-11-13           1014
+12      Oaktree (Howard Marks)  2025-11-13            165
+18          Third Point (Loeb)  2025-11-14             46
+17       TCI Fund (Chris Hohn)  2025-11-14              9
+16             Soros Fund Mgmt  2025-11-14            184
+14       Point72 (Steve Cohen)  2025-11-14           2263
+13    Pershing Square (Ackman)  2025-11-14             11
+10  Icahn Capital (Carl Icahn)  2025-11-14             20
+19      Tiger Global (Coleman)  2025-11-14             56
+8             Farallon Capital  2025-11-14           7635
+7     Duquesne (Druckenmiller)  2025-11-14             65
+6                    D.E. Shaw  2025-11-14           5726
+5        Citadel (Ken Griffin)  2025-11-14          15551
+3          Berkshire (Buffett)  2025-11-14            115
+11          Lone Pine (Mandel)  2025-11-14             25
+20   Viking Global (Halvorsen)  2025-11-14             78

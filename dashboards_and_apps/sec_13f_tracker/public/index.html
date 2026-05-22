@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional 13F Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon"></div>
+                <div class="brand-name">13F TERMINAL</div>
+            </div>
+
+            <nav>
+                <div class="nav-item active" id="nav-overview" onclick="switchView('overview')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Market Grid
+                </div>
+                <div class="nav-item" id="nav-momentum" onclick="switchView('momentum')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    Momentum
+                </div>
+                <div class="nav-item" id="nav-funds" onclick="switchView('funds')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                        </path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    Fund Explorer
+                </div>
+                <div class="nav-item" id="nav-macro" onclick="switchView('macro')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07L19.07 4.93"></path>
+                    </svg>
+                    Macro Economic
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Content -->
+        <main class="main">
+            <!-- View: Market Overview -->
+            <div id="view-overview" class="view">
+                <header class="header">
+                    <div class="title-group">
+                        <h1 id="view-title">Institutional Aggregated Data</h1>
+                        <p>Consolidated holdings across billionaire funds and legendary managers.</p>
+                    </div>
+                    <div class="actions">
+                        <div class="search-container">
+                            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="search-input" class="search-input"
+                                placeholder="Search issuer or fund...">
+                        </div>
+                        <button class="btn btn-primary" onclick="location.reload()">Refresh Data</button>
+                    </div>
+                </header>
+
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr 1.5fr; gap:20px;">
+                    <div class="card">
+                        <div class="stat-header">Aggregate Market Value</div>
+                        <div class="stat-value" id="total-val">$0.00</div>
+                        <div class="stat-sub">Tracked Positions</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Primary Consensus</div>
+                        <div class="stat-value text-primary" id="consensus-pick">-</div>
+                        <div class="stat-sub">Highest Allocation</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Active Entities</div>
+                        <div class="stat-value" id="entities-count">0</div>
+                        <div class="stat-sub">13F Sources</div>
+                    </div>
+                    <div class="card" style="padding:10px; display:flex; flex-direction:column; justify-content:center">
+                        <div class="stat-header">Global Sector Heatmap</div>
+                        <div style="height: 60px;">
+                            <canvas id="global-sector-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breakdown Panel (Hidden by Default) -->
+                <div class="card table-panel" id="security-breakdown-panel"
+                    style="display:none; border:1px solid var(--accent-blue); margin-top:20px; box-shadow: 0 0 20px rgba(92,124,255,0.1)">
+                    <div class="table-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 id="detail-security-title">Institutional Holders Breakdown</h2>
+                        <button class="btn" style="padding:4px 12px; font-size:11px"
+                            onclick="closeSecurityDetail()">Close [X]</button>
+                    </div>
+                    <div class="table-container" style="max-height:300px">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Institutional Entity</th>
+                                    <th class="text-right">Shares Held</th>
+                                    <th class="text-right">Market Value</th>
+                                    <th class="text-right">Reported Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="security-detail-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-panel">
+                    <div class="table-header">
+                        <h2>Top Institutional Positions by Market Value</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="80">Rank</th>
+                                    <th>Security Identifier</th>
+                                    <th>Issuer Name</th>
+                                    <th>Sector</th>
+                                    <th class="text-right">Aggregate Value</th>
+                                    <th class="text-right">Fund Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overview-body">
+                                <!-- Data injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Momentum Analysis -->
+            <div id="view-momentum" class="view" style="display: none;">
+                <header class="header">
+                    <div class="title-group">
+                        <h1>Momentum & Accumulation</h1>
+                        <p>Tracking net changes in share counts and market capitalization.</p>
+                    </div>
+                    <div class="actions">
+                        <select id="momentum-period" class="btn" onchange="renderMomentum()">
+                            <option value="weekly">7D Changes</option>
+                            <option value="monthly">30D Changes</option>
+                        </select>
+                    </div>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="card" style="grid-column: span 2;">
+                        <div class="stat-header">Smart Money Rotation (Net Industry Flow)</div>
+                        <div style="height: 120px;">
+                            <canvas id="rotation-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Market Participation</div>
+                        <div class="stat-value" id="change-source-count">0</div>
+                        <div class="stat-sub">Analyzed Filings</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top:24px; gap:24px;">
+                    <div class="card table-panel">
+                        <div class="table-header">
+                            <h2 style="color:var(--accent-green); font-size:14px">New Passive/Active Entries</h2>
+                        </div>
+                        <div class="table-container" style="max-height:220px">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Issuer</th>
+                                        <th class="text-right">Value Δ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="momentum-new-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card table-panel">
+                        <div class="table-header">
+                            <h2 style="color:var(--accent-red); font-size:14px">Complete Liquidations</h2>
+                        </div>
+                        <div class="table-container" style="max-height:220px">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Issuer</th>
+                                        <th class="text-right">Value Δ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="momentum-closed-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-panel" style="margin-top: 24px;">
+                    <div class="table-header">
+                        <h2>Net Change Analysis (Aggregated)</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>CUSIP</th>
+                                    <th>Issuer Name</th>
+                                    <th>Sector</th>
+                                    <th class="text-right">Share Δ</th>
+                                    <th class="text-right">Value Δ</th>
+                                    <th class="text-right">Funds</th>
+                                </tr>
+                            </thead>
+                            <tbody id="momentum-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Fund Explorer -->
+            <div id="view-funds" class="view" style="display: none;">
+                <header class="header">
+                    <div class="title-group">
+                        <h1 id="fund-name-title">Institutional Explorer</h1>
+                        <p>Detailed portfolio breakdown and concentration metrics.</p>
+                    </div>
+                    <div class="select-wrapper">
+                        <select id="fund-select" onchange="renderFundDetail()">
+                            <!-- Options injected -->
+                        </select>
+                    </div>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="stat-header">Managed AUM</div>
+                        <div class="stat-value" id="fund-aum-val">$0.00</div>
+                        <div class="stat-sub" id="fund-last-date">Report Date</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Portfolio Density</div>
+                        <div class="stat-value" id="fund-pos-count">0</div>
+                        <div class="stat-sub">Total Positions</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Top 10 Conviction</div>
+                        <div class="stat-value" id="fund-top10-weight">0%</div>
+                        <div class="stat-sub">Conc. Metric</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Portfolio Turnover</div>
+                        <div class="stat-value" id="fund-turnover">0%</div>
+                        <div class="stat-sub">Est. Activity</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top:24px; gap:24px;">
+                    <div class="card">
+                        <div class="stat-header">Top 5 Holdings Allocation</div>
+                        <div style="height: 180px;">
+                            <canvas id="fund-doughnut-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-header">Strategic Sector Allocation</div>
+                        <div style="height: 180px;">
+                            <canvas id="fund-sector-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-panel">
+                    <div class="table-header">
+                        <h2>Complete Portfolio Allocation</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>CUSIP</th>
+                                    <th>Security Name</th>
+                                    <th>Sector</th>
+                                    <th class="text-right">Position Value</th>
+                                    <th class="text-right">Shares Held</th>
+                                    <th class="text-right">Allocation %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fund-detail-body">
+                                <!-- Data injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Macro Economic -->
+            <div id="view-macro" class="view" style="display: none;">
+                <header class="header">
+                    <div class="title-group">
+                        <h1>Advanced Macro Intelligence</h1>
+                        <p>Cross-asset signals, liquidity trends, and systematic regime detection.</p>
+                    </div>
+                    <div id="macro-regime-badge" class="regime-badge">
+                        NEUTRAL REGIME
+                    </div>
+                </header>
+
+                <!-- Regime Summary -->
+                <div class="regime-container card">
+                    <div class="regime-header">
+                        <div class="regime-score-box">
+                            <span class="label">Macro Score</span>
+                            <span class="value" id="global-macro-score">0.0</span>
+                        </div>
+                        <div class="regime-status-text">
+                            <h2 id="regime-label">NEUTRAL</h2>
+                            <p id="regime-description">Market conditions are balanced with no extreme stressors or
+                                expansionary signals.</p>
+                        </div>
+                        <div class="regime-sentiment" id="regime-sentiment">
+                            NEUTRAL
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Grid -->
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-top:20px;"
+                    id="macro-category-grid">
+                    <!-- Category Cards Injected -->
+                </div>
+
+                <!-- Charts & Details Toggle -->
+                <div class="stats-grid" style="grid-template-columns: 1.5fr 1fr; margin-top: 24px;">
+                    <div class="card" style="padding: 16px;">
+                        <div class="table-header" style="margin-bottom:12px">
+                            <h2 id="macro-chart-title">Liquidity Trends (Historical)</h2>
+                            <select id="macro-cat-select" onchange="renderMacro()" class="btn"
+                                style="padding:4px 8px; font-size:12px">
+                                <option value="Liquidity">Liquidity</option>
+                                <option value="Rates">Policy Rates</option>
+                                <option value="YieldCurve">Yield Curve</option>
+                                <option value="Inflation">Inflation</option>
+                                <option value="Credit">Credit Market</option>
+                                <option value="Volatility">Volatility</option>
+                                <option value="Consumption">Consumption</option>
+                                <option value="Housing">Housing Market</option>
+                                <option value="Labor">Labor Market</option>
+                                <option value="Industrial">Industrial / Activity</option>
+                                <option value="Global">Global Dollar</option>
+                            </select>
+                        </div>
+                        <div style="height: 280px;">
+                            <canvas id="chart-macro-main"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card table-panel" style="margin:0">
+                        <div class="table-header">
+                            <h2 style="font-size:14px">Momentum Analytics</h2>
+                        </div>
+                        <div class="table-container" style="max-height:300px">
+                            <table style="font-size:11px">
+                                <thead>
+                                    <tr>
+                                        <th>Indicator</th>
+                                        <th class="text-right">7D Δ</th>
+                                        <th class="text-right">30D Δ</th>
+                                        <th class="text-right">Z-Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="macro-analytics-body">
+                                    <!-- Injected -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

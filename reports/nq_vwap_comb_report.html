@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NQ ORB VWAP 全組合戰力矩陣</title>
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: sans-serif; padding: 40px; }
+        .card { background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 30px; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .table th, .table td { padding: 12px; border: 1px solid #1e293b; text-align: center; }
+        .highlight { color: #34d399; font-weight: bold; }
+        img { max-width: 100%; border-radius: 12px; }
+        .legend { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>NQ ORB: 4-VWAP 全組合戰力矩陣 (2021-2026)</h1>
+    <div class="legend">
+        <b>CR</b>: Current RTH VWAP | <b>CE</b>: Current ETH VWAP | <b>YR</b>: Yesterday RTH VWAP | <b>YE</b>: Yesterday ETH VWAP <br>
+        (1 = 價格在其上方, 0 = 價格在其下方)
+    </div>
+
+    <div class="card">
+        <h2>多單 (Long) 戰力排行 TOP 10</h2>
+        <table border="1" class="dataframe table table-dark">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Trades</th>
+      <th>Avg_R</th>
+      <th>Win_Rate</th>
+    </tr>
+    <tr>
+      <th>comb</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>CR:1 CE:0 YR:0 YE:0</th>
+      <td>10</td>
+      <td>0.200000</td>
+      <td>60.000000</td>
+    </tr>
+    <tr>
+      <th>CR:1 CE:1 YR:1 YE:1</th>
+      <td>368</td>
+      <td>0.109386</td>
+      <td>58.152174</td>
+    </tr>
+    <tr>
+      <th>CR:1 CE:1 YR:0 YE:0</th>
+      <td>122</td>
+      <td>0.147314</td>
+      <td>57.377049</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+    <div class="card">
+        <h2>空單 (Short) 戰力排行 TOP 10</h2>
+        <table border="1" class="dataframe table table-dark">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Trades</th>
+      <th>Avg_R</th>
+      <th>Win_Rate</th>
+    </tr>
+    <tr>
+      <th>comb</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>CR:0 CE:0 YR:1 YE:1</th>
+      <td>170</td>
+      <td>0.149250</td>
+      <td>58.235294</td>
+    </tr>
+    <tr>
+      <th>CR:0 CE:0 YR:1 YE:0</th>
+      <td>11</td>
+      <td>0.193175</td>
+      <td>54.545455</td>
+    </tr>
+    <tr>
+      <th>CR:0 CE:0 YR:0 YE:0</th>
+      <td>298</td>
+      <td>-0.019589</td>
+      <td>48.657718</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+    <div class="card">
+        <h2>全組合勝率對比圖</h2>
+        <img src="file:///C:/Users/user/.gemini/antigravity/scratch/nq_vwap_comb_matrix.png">
+    </div>
+</body>
+</html>

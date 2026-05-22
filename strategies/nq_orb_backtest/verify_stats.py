@@ -1,0 +1,10 @@
+import pandas as pd
+df = pd.read_csv('backtest_15m_orb_trades.csv')
+print(f'Total trades: {len(df)}')
+print(f'Win: {len(df[df.Result == "Win"])}')
+print(f'Loss: {len(df[df.Result == "Loss"])}')
+print(f'EOD: {len(df[df.Result == "EOD"])}')
+print(f'Total PnL: {df.PnL.sum():.2f}')
+df['RR'] = (df['TP'] - df['Entry']) / (df['Entry'] - df['SL'])
+print(f'Average RR: {df.RR.mean():.2f}')
+print(df[['EntryTime', 'ExitTime', 'Entry', 'SL', 'TP', 'Result']].head())

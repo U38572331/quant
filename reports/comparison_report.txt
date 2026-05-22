@@ -1,0 +1,35 @@
+Loading databento data... This may take a minute.
+Processing data...
+Running Risk Sensitivity Analysis...
+
+[MaxRisk 40]
+  Total Profit: 32,065.85
+  Trades: 547.00
+  WinRate: 27.42
+  PF: 1.19
+  MaxDD: 7,726.23
+  Sharpe: 0.60
+
+[MaxRisk 50]
+  Total Profit: 48,913.53
+  Trades: 609.00
+  WinRate: 28.41
+  PF: 1.24
+  MaxDD: 7,696.88
+  Sharpe: 0.78
+
+[MaxRisk 60]
+  Total Profit: 52,944.62
+  Trades: 640.00
+  WinRate: 29.06
+  PF: 1.24
+  MaxDD: 7,696.88
+  Sharpe: 0.79
+
+[No Filter]
+  Total Profit: 41,400.08
+  Trades: 677.00
+  WinRate: 28.80
+  PF: 1.16
+  MaxDD: 14,920.54
+  Sharpe: 0.53

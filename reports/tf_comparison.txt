@@ -1,0 +1,19 @@
+Loading databento data... This may take a minute.
+Processing data...
+Comparing Breakout Confirmation Timeframes (1m vs 5m)...
+
+[1m Breakout]
+  Profit: 52,944.62
+  Trades: 640.00
+  WinRate: 29.06
+  PF: 1.24
+  MaxDD: 7,696.88
+  Sharpe: 0.79
+
+[5m Body Breakout]
+  Profit: 34,200.17
+  Trades: 550.00
+  WinRate: 28.73
+  PF: 1.17
+  MaxDD: 11,535.75
+  Sharpe: 0.54

@@ -1,0 +1,41 @@
+# Data files
+*.csv
+*.parquet
+*.json
+*.db
+*.sqlite
+*.sqlite3
+
+# Python and Node
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+*venv*/
+ENV/
+node_modules/
+dist/
+build/
+
+# Large binaries and logs
+*.log
+*.zip
+*.dbn
+*.parquet
+*.pkg
+*.pdb
+*.dll
+*.so
+*.dylib
+*.tar.gz
+*.msi
+*.exe
+.env
+
+# System
+.DS_Store
+Thumbs.db

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deribit GEX Dashboard</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Chart.js for easier visualization, we can switch to raw Canvas/D3 if strict requirements -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    <!-- Plotly.js for 3D Heatmaps -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>gexstream clone</h1>
+        <nav>
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">intraday</a>
+            <a href="#">pulse</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Gamma Exposure Panel -->
+        <div class="panel">
+            <div class="panel-header">gamma exposure</div>
+            <div class="chart-container">
+                <canvas id="gexChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Options Inventory Panel -->
+        <div class="panel">
+            <div class="panel-header">options inventory</div>
+            <div class="chart-container">
+                <canvas id="oiChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="panel" id="stats-panel">
+            <div class="stats-header">
+                <h2>BTC <span class="date-range" id="date-range">...</span></h2>
+            </div>
+
+            <div class="stats-grid">
+                <!-- Row 1 -->
+                <div class="stat-item"><span class="label">GEX Ratio</span> <span class="value green"
+                        id="gex-ratio">--</span></div>
+                <div class="stat-item"><span class="label">Net GEX</span> <span class="value green"
+                        id="net-gex">--</span></div>
+
+                <!-- Row 2 (Flow - Proxy or Placeholder) -->
+                <div class="stat-item"><span class="label">Flow Ratio</span> <span class="value red"
+                        id="flow-ratio">--</span></div>
+                <div class="stat-item"><span class="label">Net Flow</span> <span class="value red"
+                        id="net-flow">--</span></div>
+
+                <!-- Row 3 -->
+                <div class="stat-item"><span class="label">Call OI</span> <span class="value" id="call-oi-max">--</span>
+                </div>
+                <div class="stat-item"><span class="label">Pos GEX</span> <span class="value green"
+                        id="pos-gex-max">--</span></div>
+
+                <!-- Row 4 -->
+                <div class="stat-item"><span class="label">Zero Gamma</span> <span class="value white"
+                        id="zero-gamma">--</span></div>
+                <div class="stat-item"><span class="label">Neg GEX</span> <span class="value red"
+                        id="neg-gex-max">--</span></div>
+
+                <!-- Row 5 -->
+                <div class="stat-item"><span class="label">Call IV</span> <span class="value green"
+                        id="call-iv">--</span></div>
+                <div class="stat-item"><span class="label">Put OI</span> <span class="value red"
+                        id="put-oi-max">--</span></div>
+
+                <!-- Row 6 -->
+                <div class="stat-item"><span class="label">Put IV</span> <span class="value red" id="put-iv">--</span>
+                </div>
+                <div class="stat-item"></div>
+            </div>
+
+            <div class="heatmap-container">
+                <div class="panel-header">Net GEX Heatmap</div>
+                <div id="gex-heatmap" class="plotly-chart"></div>
+            </div>
+
+            <div class="heatmap-container">
+                <div class="panel-header">Net IV Heatmap</div>
+                <div id="iv-heatmap" class="plotly-chart"></div>
+            </div>
+
+            <div class="stat-group check-status">
+                <div class="stat-row">
+                    <span class="label">API</span>
+                    <span class="value" id="api-status">Connecting...</span>
+                    <span class="value" id="btc-price" style="margin-left:auto">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

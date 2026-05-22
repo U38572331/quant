@@ -1,0 +1,24 @@
+DEBUG: Patching provider_interface...
+DEBUG: Successfully injected 0 dynamic OBBject types.
+DEBUG: Keys: []
+DEBUG: Module attributes (sample): ['Annotated', 'Any', 'BaseModel', 'Body', 'Callable', 'ConfigDict', 'DataclassField', 'Dict', 'Discriminator', 'ExtraData', 'ExtraParams', 'Field', 'FieldInfo', 'List', 'Literal', 'MapType', 'OBBject', 'Optional', 'ProviderChoices', 'ProviderInterface']
+Loading...
+
+
+Invalid console style 'dark', using default.
+Error loading default.
+Traceback (most recent call last):
+  File "cli.py", line 52, in <module>
+  File "cli.py", line 14, in main
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_cli\controllers\cli_controller.py", line 51, in <module>
+  File "openbb\package\__extensions__.py", line 110, in commodity
+    from . import commodity
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb\package\commodity.py", line 34, in <module>
+    from openbb_core.app.provider_interface import (
+    ...<2 lines>...
+    )
+ImportError: cannot import name 'OBBject_PetroleumStatusReport' from 'openbb_core.app.provider_interface' (C:\Users\user\AppData\Local\Temp\_MEI361282\openbb_core\app\provider_interface.py)
+CRITICAL ERROR: cannot import name 'OBBject_PetroleumStatusReport' from 'openbb_core.app.provider_interface' (C:\Users\user\AppData\Local\Temp\_MEI361282\openbb_core\app\provider_interface.py)
+Press Enter to close...

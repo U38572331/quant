@@ -1,0 +1,51 @@
+DEBUG: Patching provider_interface...
+DEBUG: Entry points found: 77
+DEBUG: Group openbb_core_extension: 16 entries
+DEBUG: Sample: EntryPoint(name='commodity', value='openbb_commodity.commodity_router:router', group='openbb_core_extension')
+DEBUG: Group openbb_provider_extension: 33 entries
+DEBUG: Sample: EntryPoint(name='alpha_vantage', value='openbb_alpha_vantage:alpha_vantage_provider', group='openbb_provider_extension')
+DEBUG: Group openbb_obbject_extension: 1 entries
+DEBUG: Sample: EntryPoint(name='openbb_charting', value='openbb_charting:ext', group='openbb_obbject_extension')
+DEBUG: Successfully injected 191 dynamic OBBject types.
+DEBUG: Keys: ['EquityHistorical', 'HistoricalEps', 'EtfHistorical', 'AnalystSearch', 'CompanyNews', 'WorldNews', 'PriceTarget', 'BlsSearch', 'BlsSeries', 'AvailableIndices', 'EquityQuote', 'EquitySearch', 'IndexConstituents', 'FuturesCurve', 'IndexHistorical', 'IndexSearch', 'IndexSnapshots', 'OptionsChains', 'COT', 'COTSearch', 'CongressBills', 'CongressBillInfo', 'CongressBillText', 'FuturesHistorical', 'FuturesInfo', 'FuturesInstruments', 'BalanceOfPayments', 'CurrencyReferenceRates', 'YieldCurve', 'AvailableIndicators', 'CountryProfile', 'EconomicIndicators', 'ExportDestinations', 'GdpNominal', 'GdpReal', 'PortVolume', 'FamaFrenchBreakpoints', 'FamaFrenchCountryPortfolioReturns', 'FamaFrenchFactors', 'FamaFrenchInternationalIndexReturns', 'FamaFrenchRegionalPortfolioReturns', 'FamaFrenchUSPortfolioReturns', 'CentralBankHoldings', 'FederalFundsRate', 'FomcDocuments', 'MoneyMeasures', 'OvernightBankFundingRate', 'PrimaryDealerFails', 'PrimaryDealerPositioning', 'SOFR', 'TreasuryRates', 'OTCAggregate', 'EquityShortInterest', 'CompareGroups', 'EtfPricePerformance', 'EquityInfo', 'EquityScreener', 'KeyMetrics', 'PricePerformance', 'AnalystEstimates', 'BalanceSheet', 'BalanceSheetGrowth', 'CalendarDividend', 'CalendarEarnings', 'CalendarEvents', 'CalendarIpo', 'CalendarSplits', 'CashFlowStatement', 'CashFlowStatementGrowth', 'CompanyFilings', 'CryptoHistorical', 'CryptoSearch', 'CurrencyHistorical', 'CurrencyPairs', 'CurrencySnapshots', 'DiscoveryFilings', 'EarningsCallTranscript', 'EconomicCalendar', 'EquityActive', 'EquityOwnership', 'EquityPeers', 'EquityGainers', 'EquityLosers', 'EsgScore', 'EtfCountries', 'EtfEquityExposure', 'EtfHoldings', 'EtfInfo', 'EtfSearch', 'EtfSectors', 'ExecutiveCompensation', 'FinancialRatios', 'ForwardEbitdaEstimates', 'ForwardEpsEstimates', 'HistoricalDividends', 'HistoricalEmployees', 'HistoricalMarketCap', 'HistoricalSplits', 'IncomeStatement', 'IncomeStatementGrowth', 'InsiderTrading', 'InstitutionalOwnership', 'KeyExecutives', 'MarketSnapshots', 'NportDisclosure', 'PriceTargetConsensus', 'RevenueBusinessLine', 'RevenueGeographic', 'RiskPremium', 'ShareStatistics', 'GovernmentTrades', 'BondIndices', 'CommoditySpotPrices', 'ConsumerPriceIndex', 'EuroShortTermRate', 'SONIA', 'Ameribor', 'PROJECTIONS', 'IORB', 'DiscountWindowPrimaryCreditRate', 'EuropeanCentralBankInterestRates', 'ManufacturingOutlookNY', 'ManufacturingOutlookTexas', 'MortgageIndices', 'NonFarmPayrolls', 'PersonalConsumptionExpenditures', 'CommercialPaper', 'FredReleaseTable', 'FredSearch', 'FredSeries', 'FredRegional', 'RetailPrices', 'SeniorLoanOfficerSurvey', 'SpotRate', 'HighQualityMarketCorporateBond', 'TreasuryConstantMaturity', 'SelectedTreasuryConstantMaturity', 'SelectedTreasuryBill', 'SurveyOfEconomicConditionsChicago', 'TipsYields', 'UniversityOfMichigan', 'TreasuryAuctions', 'TreasuryPrices', 'DirectionOfTrade', 'MaritimeChokePointInfo', 'MaritimeChokePointVolume', 'PortInfo', 'ForwardPeEstimates', 'ForwardSalesEstimates', 'HistoricalAttributes', 'LatestAttributes', 'OptionsSnapshots', 'OptionsUnusual', 'ReportedFinancials', 'SearchAttributes', 'SP500Multiples', 'TopRetail', 'CompositeLeadingIndicator', 'CountryInterestRates', 'GdpForecast', 'HousePriceIndex', 'SharePriceIndex', 'Unemployment', 'EquityNBBO', 'CikMap', 'CompareCompanyFacts', 'EquityFTD', 'Filings', 'Form13FHR', 'SecHtmFile', 'InstitutionsSearch', 'LatestFinancialReports', 'ManagementDiscussionAnalysis', 'RssLitigation', 'SchemaFiles', 'SecFiling', 'SicSearch', 'SymbolMap', 'ShortVolume', 'TrailingDividendYield', 'BondPrices', 'IndexSectors', 'PetroleumStatusReport', 'ShortTermEnergyOutlook', 'ETFGainers', 'ETFLosers', 'ETFActive', 'EquityAggressiveSmallCaps', 'EquityUndervaluedGrowth', 'EquityUndervaluedLargeCaps', 'GrowthTechEquities']
+DEBUG: Module attributes (sample): ['Annotated', 'Any', 'BaseModel', 'Body', 'Callable', 'ConfigDict', 'DataclassField', 'Dict', 'Discriminator', 'ExtraData', 'ExtraParams', 'Field', 'FieldInfo', 'List', 'Literal', 'MapType', 'OBBject', 'OBBject_Ameribor', 'OBBject_AnalystEstimates', 'OBBject_AnalystSearch']
+Loading...
+
+Traceback (most recent call last):
+  File "cli.py", line 60, in <module>
+  File "cli.py", line 14, in main
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_cli\controllers\cli_controller.py", line 51, in <module>
+    d: "menu" if not isinstance(getattr(obb, d), BaseModel) else "command"
+                                ~~~~~~~^^^^^^^^
+  File "openbb\package\__extensions__.py", line 110, in commodity
+    from . import commodity
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb\package\commodity.py", line 39, in <module>
+    from typing import (
+    ...<2 lines>...
+    )
+ImportError: cannot import name 'PetroleumStatusReport' from 'typing' (C:\Users\user\AppData\Local\Temp\_MEI627802\typing.py)
+CRITICAL ERROR: cannot import name 'PetroleumStatusReport' from 'typing' (C:\Users\user\AppData\Local\Temp\_MEI627802\typing.py)
+Press Enter to close...Traceback (most recent call last):
+  File "cli.py", line 60, in <module>
+  File "cli.py", line 14, in main
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_cli\controllers\cli_controller.py", line 51, in <module>
+    d: "menu" if not isinstance(getattr(obb, d), BaseModel) else "command"
+                                ~~~~~~~^^^^^^^^
+  File "openbb\package\__extensions__.py", line 110, in commodity
+    from . import commodity
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb\package\commodity.py", line 39, in <module>
+    from typing import (
+    ...<2 lines>...
+    )
+ImportError: cannot import name 'PetroleumStatusReport' from 'typing' (C:\Users\user\AppData\Local\Temp\_MEI627802\typing.py)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "cli.py", line 65, in <module>
+KeyboardInterrupt
+[PYI-60052:ERROR] Failed to execute script 'cli' due to unhandled exception!

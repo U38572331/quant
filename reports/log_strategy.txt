@@ -1,0 +1,26 @@
+Training XGBoost Models...
+Train Size: 1691
+Long Class Balance: {0: 1638, 1: 53}
+Short Class Balance: {0: 1554, 1: 137}
+Long Model Feature Importance:
+DayOfWeek          0.137781
+VWAP_Dev           0.117920
+Norm_Lower_Wick    0.099654
+Norm_Gap           0.098247
+Norm_Upper_Wick    0.097937
+RVol               0.096049
+Month              0.093902
+Prev_Vol_SMA       0.092124
+Prev_ATR           0.083900
+Norm_ORB_Range     0.082485
+dtype: float32
+Optimizing Strategy Strategy (Grid Search)...
+Optimization Complete. Best Sharpe: -999
+Traceback (most recent call last):
+  File "C:\Users\user\.gemini\antigravity\scratch\src\ml_strategy.py", line 219, in <module>
+    ml.optimize_strategy()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\user\.gemini\antigravity\scratch\src\ml_strategy.py", line 209, in optimize_strategy
+    print(f"Best Params: Prob>{best_combo[0]}, TP={best_combo[1]} ATR, SL={best_combo[2]} ATR")
+                               ~~~~~~~~~~^^^
+TypeError: 'NoneType' object is not subscriptable

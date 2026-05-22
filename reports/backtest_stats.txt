@@ -1,0 +1,70 @@
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\site-packages\vectorbt\utils\datetime_.py:24: FutureWarning:
+
+'T' is deprecated and will be removed in a future version. Please use 'min' instead of 'T'.
+
+Loading databento data... This may take a minute.
+Processing data...
+Running backtest strategy...
+Preparing VectorBT portfolio...
+Total entries triggered: 867
+
+=== Backtest Statistics ===
+Start                         2021-01-04 09:30:00-05:00
+End                           2025-12-12 16:00:00-05:00
+Period                               1245 days 09:38:00
+Start Value                                    100000.0
+End Value                                  65362.420095
+Total Return [%]                              -34.63758
+Benchmark Return [%]                                NaN
+Max Gross Exposure [%]                            100.0
+Total Fees Paid                            66666.666667
+Max Drawdown [%]                             100.072993
+Max Drawdown Duration                1238 days 20:31:00
+Total Trades                                          1
+Total Closed Trades                                   0
+Total Open Trades                                     1
+Open Trade PnL                            -34637.579905
+Win Rate [%]                                        NaN
+Best Trade [%]                                      NaN
+Worst Trade [%]                                     NaN
+Avg Winning Trade [%]                               NaN
+Avg Losing Trade [%]                                NaN
+Avg Winning Trade Duration                          NaT
+Avg Losing Trade Duration                           NaT
+Profit Factor                                       NaN
+Expectancy                                          NaN
+Sharpe Ratio                                        NaN
+Calmar Ratio                                        NaN
+Omega Ratio                                         NaN
+Sortino Ratio                                       NaN
+Name: close, dtype: object
+
+Plot skipped for 5-year data to save memory.

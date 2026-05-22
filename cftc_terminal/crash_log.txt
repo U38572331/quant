@@ -1,0 +1,21 @@
+--- STARTING CRASH REPRODUCTION ---
+
+Testing Code: 124601
+  Result Type: <class 'list'>
+  Row Count: 67
+  Sample Keys: ['id', 'market_and_exchange_names', 'report_date_as_yyyy_mm_dd', 'yyyy_mm_dd_format', 'contract_market_name']...
+  JSON Serialization: OK
+
+Testing Code: 023391
+  Result Type: <class 'list'>
+  Row Count: 833
+  Sample Keys: ['id', 'market_and_exchange_names', 'report_date_as_yyyy_mm_dd', 'yyyy_mm_dd_format', 'contract_market_name']...
+  JSON Serialization: OK
+
+Testing Code: 067651
+  Result Type: <class 'list'>
+  Row Count: 834
+  Sample Keys: ['id', 'market_and_exchange_names', 'report_date_as_yyyy_mm_dd', 'yyyy_mm_dd_format', 'contract_market_name']...
+  JSON Serialization: OK
+
+--- END ---

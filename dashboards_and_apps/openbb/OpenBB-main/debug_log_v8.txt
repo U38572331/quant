@@ -1,0 +1,40 @@
+DEBUG: Patching provider_interface...
+DEBUG: Entry points found: 74
+DEBUG: Group openbb_core_extension: 16 entries
+DEBUG: Sample: EntryPoint(name='commodity', value='openbb_commodity.commodity_router:router', group='openbb_core_extension')
+DEBUG: Group openbb_provider_extension: 33 entries
+DEBUG: Sample: EntryPoint(name='alpha_vantage', value='openbb_alpha_vantage:alpha_vantage_provider', group='openbb_provider_extension')
+DEBUG: Group openbb_obbject_extension: 1 entries
+DEBUG: Sample: EntryPoint(name='openbb_charting', value='openbb_charting:ext', group='openbb_obbject_extension')
+DEBUG: Successfully injected 0 dynamic OBBject types.
+DEBUG: Keys: []
+DEBUG: Module attributes (sample): ['Annotated', 'Any', 'BaseModel', 'Body', 'Callable', 'ConfigDict', 'DataclassField', 'Dict', 'Discriminator', 'ExtraData', 'ExtraParams', 'Field', 'FieldInfo', 'List', 'Literal', 'MapType', 'OBBject', 'Optional', 'ProviderChoices', 'ProviderInterface']
+Traceback (most recent call last):
+  File "cli.py", line 60, in <module>
+  File "cli.py", line 14, in main
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_cli\controllers\cli_controller.py", line 20, in <module>
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb\__init__.py", line 8, in <module>
+    from openbb_core.app.static.app_factory import (
+    ...<2 lines>...
+    )
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_core\app\static\app_factory.py", line 5, in <module>
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_core\app\command_runner.py", line 19, in <module>
+  File "pyimod02_importers.py", line 457, in exec_module
+  File "openbb_core\app\static\package_builder.py", line 2221, in <module>
+  File "openbb_core\app\static\package_builder.py", line 2235, in ReferenceGenerator
+  File "openbb_core\app\static\package_builder.py", line 2160, in build_route_map
+  File "openbb_core\app\router.py", line 511, in from_extensions
+  File "openbb_core\app\extension_loader.py", line 109, in core_objects
+  File "openbb_core\app\extension_loader.py", line 177, in _load_entry_points
+  File "openbb_core\app\extension_loader.py", line 151, in load_core
+  File "importlib_metadata\__init__.py", line 221, in load
+  File "importlib\__init__.py", line 88, in import_module
+ModuleNotFoundError: No module named 'openbb_commodity'
+Loading...
+
+CRITICAL ERROR: No module named 'openbb_commodity'
+Press Enter to close...

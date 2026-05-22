@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Casino - Live Baccarat</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Noto+Serif+SC:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Lobby Overlay -->
+    <div id="lobby-overlay">
+        <h1 class="lobby-title">GRAND CASINO</h1>
+        <div class="game-options">
+            <div class="game-card" id="select-blackjack">
+                <h2>Blackjack</h2>
+                <div class="card-subtitle">CLASSIC</div>
+            </div>
+            <div class="game-card" id="select-baccarat">
+                <h2>Baccarat</h2>
+                <div class="card-subtitle">LIVE</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-interface">
+        <!-- Top Nav -->
+        <button id="btn-lobby" class="nav-btn">LOBBY</button>
+
+        <!-- Background "Video Feed" Simulation -->
+        <div class="video-background">
+            <div class="curtains"></div>
+            <div class="dealer-silhouette"></div>
+        </div>
+
+        <!-- Center Stage: Where Cards are Dealt -->
+        <div class="game-stage">
+            <div class="dealer-area hidden" id="dealer-area-bj">
+                <div class="score-display hidden" id="dealer-score">0</div>
+                <div class="hand-container" id="dealer-hand"></div>
+            </div>
+
+            <div class="baccarat-stage" id="baccarat-stage">
+                <div class="stage-side player-side">
+                    <div class="stage-label p-label">PLAYER</div>
+                    <div class="score-display" id="stage-score-player">0</div>
+                    <div class="hand-container" id="player-hand-bacc"></div>
+                </div>
+                <div class="stage-center">
+                    <div class="brand-logo">GRAND CASINO</div>
+                    <div id="game-message"></div>
+                </div>
+                <div class="stage-side banker-side">
+                    <div class="stage-label b-label">BANKER</div>
+                    <div class="score-display" id="stage-score-banker">0</div>
+                    <div class="hand-container" id="banker-hand-bacc"></div>
+                </div>
+            </div>
+
+            <!-- Blackjack Player Area (Conditional) -->
+            <div class="player-area-bj hidden" id="player-area-bj">
+                <div class="hand-container" id="player-hand"></div>
+            </div>
+        </div>
+
+        <!-- UI Overlay: Betting Board (HUD) -->
+        <div class="ui-overlay">
+            <!-- Baccarat HUD -->
+            <div class="baccarat-hud hidden" id="baccarat-spots">
+                <div class="hud-row">
+                    <!-- P.Pair -->
+                    <div class="bet-zone side-zone blue-zone" id="bet-ppair">
+                        <div class="zone-info">
+                            <div class="zone-name">P. PAIR</div>
+                            <div class="zone-odds">1:11</div>
+                        </div>
+                        <div class="zone-bet-val" id="val-ppair"></div>
+                    </div>
+
+                    <!-- Player -->
+                    <div class="bet-zone main-zone blue-zone" id="bet-player">
+                        <div class="zone-info">
+                            <div class="zone-name-lg">PLAYER</div>
+                            <div class="zone-odds">1:1</div>
+                        </div>
+                        <div class="zone-bet-val" id="val-player"></div>
+                    </div>
+
+                    <!-- Tie -->
+                    <div class="bet-zone mid-zone green-zone" id="bet-tie">
+                        <div class="zone-info">
+                            <div class="zone-name">TIE</div>
+                            <div class="zone-odds">1:8</div>
+                        </div>
+                        <div class="zone-bet-val" id="val-tie"></div>
+                    </div>
+
+                    <!-- Banker -->
+                    <div class="bet-zone main-zone red-zone" id="bet-banker">
+                        <div class="zone-info">
+                            <div class="zone-name-lg">BANKER</div>
+                            <div class="zone-odds">1:0.95</div>
+                        </div>
+                        <div class="zone-bet-val" id="val-banker"></div>
+                    </div>
+
+                    <!-- B.Pair -->
+                    <div class="bet-zone side-zone red-zone" id="bet-bpair">
+                        <div class="zone-info">
+                            <div class="zone-name">B. PAIR</div>
+                            <div class="zone-odds">1:11</div>
+                        </div>
+                        <div class="zone-bet-val" id="val-bpair"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blackjack HUD -->
+            <div class="blackjack-hud hidden" id="blackjack-hud">
+                <div class="betting-spot" id="betting-spot"></div>
+            </div>
+
+            <!-- Bottom Controls -->
+            <div class="control-bar">
+                <div class="balance-info">
+                    <div class="info-label">BALANCE</div>
+                    <div class="info-val" id="balance">1000</div>
+                </div>
+
+                <div class="chip-console">
+                    <div class="chip" data-value="10">10</div>
+                    <div class="chip" data-value="50">50</div>
+                    <div class="chip" data-value="100">100</div>
+                    <div class="chip" data-value="500">500</div>
+                </div>
+
+                <div class="action-console">
+                    <!-- Universal Actions -->
+                    <div class="betting-actions" id="betting-controls">
+                        <button id="btn-deal" class="console-btn deal-btn" disabled>DEAL</button>
+                        <button id="btn-clear" class="console-btn clear-btn">CLEAR</button>
+                    </div>
+
+                    <!-- BJ Specific -->
+                    <div class="game-actions hidden" id="game-actions">
+                        <button id="btn-stand" class="console-btn">STAND</button>
+                        <button id="btn-split" class="console-btn" disabled>SPLIT</button>
+                        <button id="btn-double" class="console-btn">DOUBLE</button>
+                        <button id="btn-hit" class="console-btn">HIT</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Overlay -->
+            <div id="message-area" class="hidden"></div>
+
+            <!-- Insurance Modal -->
+            <div id="insurance-controls" class="modal hidden">
+                <h2>Insurance?</h2>
+                <div class="modal-btns">
+                    <button id="btn-ins-yes" class="console-btn">YES</button>
+                    <button id="btn-ins-no" class="console-btn">NO</button>
+                </div>
+            </div>
+
+            <div id="restart-controls" class="hidden overlay-center">
+                <button id="btn-restart" class="console-btn deal-btn">NEW GAME</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/deck.js"></script>
+    <script src="js/games/blackjack.js"></script>
+    <script src="js/games/baccarat.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

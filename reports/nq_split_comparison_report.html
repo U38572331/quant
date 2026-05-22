@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NQ ORB 多空拆分對比報告</title>
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: sans-serif; padding: 40px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .card { background: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; }
+        .val { font-size: 28px; font-weight: bold; color: #fbbf24; }
+        img { max-width: 100%; border-radius: 12px; margin-top: 20px; }
+        h2 { color: #3b82f6; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>NQ ORB 最終對比報告：多空拆分分析</h1>
+    
+    <h2>1. 多單對比 (Long Only)</h2>
+    <div class="grid">
+        <div class="card">
+            <p>原始多單</p>
+            <div class="val">58.6 R</div>
+            <p>勝率: 56.7% | 交易: 788</p>
+        </div>
+        <div class="card" style="border-color: #34d399;">
+            <p>優化後多單 (CLV > 0.6)</p>
+            <div class="val" style="color: #34d399;">48.4 R</div>
+            <p>勝率: 58.2% | 交易: 595</p>
+        </div>
+    </div>
+
+    <h2>2. 空單對比 (Short Only)</h2>
+    <div class="grid">
+        <div class="card">
+            <p>原始空單</p>
+            <div class="val">21.8 R</div>
+            <p>勝率: 51.4% | 交易: 692</p>
+        </div>
+        <div class="card" style="border-color: #f87171;">
+            <p>優化後空單 (CLV < -0.6)</p>
+            <div class="val" style="color: #f87171;">5.4 R</div>
+            <p>勝率: 51.6% | 交易: 498</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>資產曲線全方位對比</h2>
+        <img src="file:///C:/Users/user/.gemini/antigravity/scratch/nq_split_comparison_plot.png">
+    </div>
+</body>
+</html>

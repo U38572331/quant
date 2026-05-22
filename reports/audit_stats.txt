@@ -1,0 +1,21 @@
+Loading databento data... This may take a minute.
+Processing data...
+Running backtest strategy...
+Calculating strategy statistics manually...
+
+=== Backtest Statistics ===
+Total Trades: 414
+Win Rate: 11.59%
+Total Net PnL ($): -28306023.97
+Average PnL per Trade ($): -68372.04
+Average Win ($): 19664.07
+Average Loss ($): -79917.76
+Profit Factor: 0.03
+Max Drawdown ($): 28305859.97
+
+=== Audit Statistics ===
+Trades closed on exactly the same minute bar: 0
+Trades closed within 5 minutes: 369
+Average Trade Duration (Mins): 5.56
+Average Win Points (Raw): 983.20
+Average Loss Points (Raw): -3995.89

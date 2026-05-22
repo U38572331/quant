@@ -1,0 +1,8 @@
+{
+  "pkg": {
+    "assets": [
+      "dist/**/*",
+      "node_modules/yahoo-finance2/**/*"
+    ]
+  }
+}

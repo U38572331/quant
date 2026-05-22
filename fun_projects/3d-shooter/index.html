@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玻璃欣模擬器</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./libs/three.module.js",
+                "three/addons/controls/PointerLockControls.js": "./libs/PointerLockControls.js"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="ui-container">
+        <div id="crosshair">+</div>
+        <div id="score-board">Score: <span id="score">0</span></div>
+        <div id="ammo-display">Ammo: <span id="ammo">6</span> / 6</div>
+        <div id="health-display">HP: <span id="health">10</span></div>
+        <div id="instructions">
+            <h1>NEON SHOOTER</h1>
+            <p>Click to Start</p>
+            <p>WASD to Move | Click to Shoot</p>
+            <p>R to Reload</p>
+        </div>
+        <div id="game-over" style="display: none;">
+            <h1>GAME OVER</h1>
+            <p>Score: <span id="final-score">0</span></p>
+            <p>Click to Restart</p>
+        </div>
+    </div>
+    <script type="module" src="game.js"></script>
+</body>
+
+</html>

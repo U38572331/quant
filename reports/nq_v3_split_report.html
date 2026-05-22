@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NQ ORB V3 多空拆分分析</title>
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: sans-serif; padding: 40px; }
+        .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .card { background: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; }
+        .long-val { color: #34d399; font-size: 32px; font-weight: bold; }
+        .short-val { color: #f87171; font-size: 32px; font-weight: bold; }
+        img { max-width: 100%; border-radius: 12px; border: 1px solid #1e293b; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>NQ ORB V3: 多空分開優化分析</h1>
+    
+    <div class="split-grid">
+        <div class="card">
+            <h2>多單優化 (All-Above)</h2>
+            <p>規則：價格位於 4 條延伸線之上</p>
+            <div class="long-val">+40.3 R</div>
+            <p>勝率：<b>58.2%</b> | 最大回撤：-7.5 R</p>
+        </div>
+        <div class="card">
+            <h2>空單優化 (Value Rejection)</h2>
+            <p>規則：今日跌破，昨日之上</p>
+            <div class="short-val">+25.4 R</div>
+            <p>勝率：<b>58.2%</b> | 最大回撤：-8.0 R</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>多空分離資產曲線</h2>
+        <img src="file:///C:/Users/user/.gemini/antigravity/scratch/nq_v3_split_plot.png">
+    </div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+import json
+import os
+
+DATA_FILE = r"C:\Users\user\.gemini\antigravity\scratch\nq_session_volatility_ml\edge_dashboard_data.json"
+OUT_FILE = r"C:\Users\user\.gemini\antigravity\scratch\nq_session_volatility_ml\edge_dashboard.html"
+
+with open(DATA_FILE, 'r') as f:
+    data = json.load(f)
+
+e1 = data.get('edge1_directional', [])
+e2 = data.get('edge2_gap', [])
+e3 = data.get('edge3_coiling', [])
+e4 = data.get('edge4_tod', [])
+
+html = f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NQ Deep Quantitative Edge Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+:root{{
+  --bg:#050505;--card:#0a0a0a;--card2:#111111;--border:#222;
+  --accent:#38bdf8;--accent2:#818cf8;--green:#34d399;--red:#f87171;
+  --gold:#fbbf24;--cyan:#22d3ee;--pink:#f472b6;--orange:#fb923c;
+  --text:#f8fafc;--text2:#94a3b8;--text3:#475569;
+}}
+body{{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px}}
+.hero{{
+  background:radial-gradient(ellipse at top,#111827 0%,var(--bg) 80%);
+  border-bottom:1px solid var(--border);padding:52px 0 44px;
+}}
+.container{{max-width:1400px;margin:0 auto;padding:0 36px;}}
+h1{{font-size:32px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-1px}}
+.subtitle{{color:var(--text2);font-size:16px;max-width:800px;line-height:1.6}}
+.edge-section{{background:var(--card);border-radius:16px;padding:32px;margin:32px 0;
+  border:1px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,.5)}}
+.edge-header{{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}}
+.edge-num{{background:var(--accent);color:#000;font-size:18px;font-weight:800;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;border-radius:12px;}}
+.edge-title{{font-size:22px;font-weight:700;color:var(--text)}}
+.edge-desc{{color:var(--text2);font-size:14px;line-height:1.6}}
+.chart-container{{height:400px;margin-top:24px;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card2)}}
+.insight-box{{background:rgba(56,189,248,.05);border-left:4px solid var(--accent);padding:16px 24px;border-radius:8px;margin-top:24px}}
+.insight-title{{font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}}
+.insight-text{{font-size:14px;color:var(--text);line-height:1.6}}
+.row-2{{display:grid;grid-template-columns:1fr 1fr;gap:24px}}
+table{{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px}}
+th{{background:var(--border);color:var(--text2);padding:12px;text-align:left;font-weight:600}}
+td{{padding:12px;border-bottom:1px solid var(--border);color:var(--text)}}
+.highlight{{color:var(--green);font-weight:700}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="container">
+    <h1>Deep Quantitative Edge Research</h1>
+    <p class="subtitle">發掘 NQ 盤前至美盤的不對稱交易優勢 (Asymmetric Trading Edges)。涵蓋方向性延續、跳空缺口回補、波動率收斂與高低點時間分佈。</p>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- Edge 1 -->
+<div class="edge-section">
+  <div class="edge-header">
+    <div class="edge-num">1</div>
+    <div>
+      <div class="edge-title">Directional Bias (盤前趨勢的方向性延續)</div>
+      <div class="edge-desc">歐盤出現單邊大趨勢時，美盤開盤後是更容易「延續趨勢」還是「獲利了結（均值回歸）」？</div>
+    </div>
+  </div>
+  
+  <div class="row-2">
+    <div class="chart-container" id="chart_edge1"></div>
+    <div>
+      <table>
+        <tr><th>盤前趨勢 (Euro Trend)</th><th>樣本數</th><th>美盤開盤首 30 分鐘<br/>同向機率</th><th>美盤全日<br/>同向機率</th></tr>
+"""
+for r in e1:
+    h1 = "highlight" if r['us30_cont'] > 0.55 else ""
+    h2 = "highlight" if r['us_full_cont'] > 0.55 else ""
+    html += f"<tr><td>{r['label']}</td><td>{r['n']}</td><td class='{h1}'>{r['us30_cont']:.1%}</td><td class='{h2}'>{r['us_full_cont']:.1%}</td></tr>"
+
+html += """
+      </table>
+      <div class="insight-box">
+        <div class="insight-title">Actionable Edge</div>
+        <div class="insight-text">
+          當盤前（歐盤）出現極端單邊趨勢時，美盤開盤首 30 分鐘通常會出現<b>獲利了結（反向機率較高）</b>。這意味著如果歐盤大漲，ORB 策略在開盤時的「向下突破」勝率可能高於「向上突破」。但如果看全天，強勢趨勢日有較高的同向延續性。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edge 2 -->
+<div class="edge-section">
+  <div class="edge-header">
+    <div class="edge-num">2</div>
+    <div>
+      <div class="edge-title">Gap Dynamics (缺口回補 vs 跳空延續)</div>
+      <div class="edge-desc">跳空缺口的大小和盤前成交量，是否能決定今天會「補缺口 (Fade)」還是「強勢突破 (Go)」？</div>
+    </div>
+  </div>
+  
+  <div class="row-2">
+    <div>
+      <table>
+        <tr><th>跳空幅度</th><th>平均缺口%</th><th>整體回補機率</th><th>(歐盤爆量) 回補機率</th><th>(歐盤量縮) 回補機率</th></tr>
+"""
+for r in e2:
+    html += f"<tr><td>{r['gap_bucket']}</td><td>{r['avg_gap_pct']:.2f}%</td><td>{r['fade_prob_overall']:.1%}</td><td>{r['fade_prob_high_vol']:.1%}</td><td>{r['fade_prob_low_vol']:.1%}</td></tr>"
+
+html += """
+      </table>
+      <div class="insight-box">
+        <div class="insight-title">Actionable Edge</div>
+        <div class="insight-text">
+          小缺口的天然回補機率很高（>60%）。但當遇到<b>「極大跳空缺口 + 盤前爆量」</b>時，這通常是結構性突破 (Breakaway Gap)，回補機率顯著下降。在這種日子，<b>絕對不要做均值回歸</b>，ORB 策略應順著跳空方向全力做突破。
+        </div>
+      </div>
+    </div>
+    <div class="chart-container" id="chart_edge2"></div>
+  </div>
+</div>
+
+<!-- Edge 3 -->
+<div class="edge-section">
+  <div class="edge-header">
+    <div class="edge-num">3</div>
+    <div>
+      <div class="edge-title">Volatility Coiling (極端波動壓縮爆發)</div>
+      <div class="edge-desc">亞盤與歐盤極度死寂 (Coiling) 時，美盤是否更容易出現單邊趨勢盤 (Trend Day)？</div>
+    </div>
+  </div>
+  
+  <div class="row-2">
+    <div class="chart-container" id="chart_edge3"></div>
+    <div>
+      <table>
+        <tr><th>盤前波動狀態 (Z-Score)</th><th>樣本數</th><th>單邊趨勢盤機率 (CLV > 0.85 或 < 0.15)</th><th>美盤平均震幅</th></tr>
+"""
+for r in e3:
+    h = "highlight" if r['trend_day_prob'] > 0.3 else ""
+    html += f"<tr><td>{r['label']}</td><td>{r['n']}</td><td class='{h}'>{r['trend_day_prob']:.1%}</td><td>{r['avg_us_range_pct']:.2f}%</td></tr>"
+
+html += """
+      </table>
+      <div class="insight-box">
+        <div class="insight-title">Actionable Edge</div>
+        <div class="insight-text">
+          「彈簧壓得越低，彈得越高」。當盤前波動率低於 -1.5 標準差時，當天形成「收在最高或最低點附近 (Trend Day)」的機率顯著提高。在這種極度壓縮日，ORB 策略的 TP 應該拉大至 3R 或採用 <b>Trailing Stop (移動停利)</b>，因為市場很容易出現一波到底的行情。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edge 4 -->
+<div class="edge-section">
+  <div class="edge-header">
+    <div class="edge-num">4</div>
+    <div>
+      <div class="edge-title">Time of Day (美盤高低點確立時間)</div>
+      <div class="edge-desc">盤前的波動狀態如何影響「當日最高點/最低點」形成的時間？</div>
+    </div>
+  </div>
+  
+  <div class="row-2">
+    <div>
+      <div class="chart-container" id="chart_edge4_h"></div>
+    </div>
+    <div>
+      <div class="chart-container" id="chart_edge4_l"></div>
+    </div>
+  </div>
+  <div class="insight-box">
+    <div class="insight-title">Actionable Edge</div>
+    <div class="insight-text">
+      在「高盤前波動日 (High Pre-Vol)」，市場的高低點有更高的機率在開盤前 30 分鐘 (ORB 時段) 就已經確立。這表示，10:00 以後發生的突破，大概率都是假突破 (Fakeout)。你可以利用這個時間分佈特性，作為進出場的濾網。
+    </div>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<script>
+const DARK = {paper_bgcolor:'#0a0a0a',plot_bgcolor:'#111111',
+  font:{color:'#f8fafc',family:'Inter'},
+  xaxis:{gridcolor:'#222',zerolinecolor:'#222'},
+  yaxis:{gridcolor:'#222',zerolinecolor:'#222'},
+  margin:{l:50,r:30,t:50,b:40}};
+function L(o){return Object.assign({},DARK,o)}
+
+// Chart Edge 1
+Plotly.newPlot('chart_edge1',[
+  {x:""" + json.dumps([r['label'].split('(')[0] for r in e1]) + """,
+   y:""" + json.dumps([r['us30_cont'] for r in e1]) + """,
+   name:'首30分同向',type:'bar',marker:{color:'#38bdf8'}},
+  {x:""" + json.dumps([r['label'].split('(')[0] for r in e1]) + """,
+   y:""" + json.dumps([r['us_full_cont'] for r in e1]) + """,
+   name:'全日同向',type:'bar',marker:{color:'#818cf8'}}
+],L({barmode:'group',title:'Directional Concordance Rate',yaxis:{tickformat:'.0%',range:[0,1]}}));
+
+// Chart Edge 2
+Plotly.newPlot('chart_edge2',[
+  {x:""" + json.dumps([r['gap_bucket'] for r in e2]) + """,
+   y:""" + json.dumps([r['fade_prob_low_vol'] for r in e2]) + """,
+   name:'盤前量縮 (Low Vol)',type:'bar',marker:{color:'#34d399'}},
+  {x:""" + json.dumps([r['gap_bucket'] for r in e2]) + """,
+   y:""" + json.dumps([r['fade_prob_high_vol'] for r in e2]) + """,
+   name:'盤前爆量 (High Vol)',type:'bar',marker:{color:'#f87171'}}
+],L({barmode:'group',title:'Gap Fade Probability',yaxis:{tickformat:'.0%',range:[0,1]}}));
+
+// Chart Edge 3
+Plotly.newPlot('chart_edge3',[
+  {x:""" + json.dumps([r['label'].split('(')[0] for r in e3]) + """,
+   y:""" + json.dumps([r['trend_day_prob'] for r in e3]) + """,
+   type:'scatter',mode:'lines+markers',line:{color:'#fbbf24',width:3},marker:{size:10,color:'#fbbf24'},
+   fill:'tozeroy',fillcolor:'rgba(251,191,36,0.1)'}
+],L({title:'Trend Day Probability vs Pre-Market Volatility',yaxis:{tickformat:'.0%',range:[0,0.5]}}));
+
+// Chart Edge 4 Highs
+"""
+
+e4_labels = ['09:30-10:00 (ORB)', '10:00-11:30 (Morning)', '11:30-14:00 (Midday)', '14:00-16:00 (Afternoon)']
+def get_h(regime):
+    for r in e4:
+        if r['regime'] == regime:
+            return [r['high_dist'].get(l, 0) for l in e4_labels]
+    return [0,0,0,0]
+
+def get_l(regime):
+    for r in e4:
+        if r['regime'] == regime:
+            return [r['low_dist'].get(l, 0) for l in e4_labels]
+    return [0,0,0,0]
+
+html += f"""
+Plotly.newPlot('chart_edge4_h',[
+  {{x:{json.dumps(e4_labels)}, y:{get_h('Low Pre-Vol')}, name:'Low Pre-Vol', type:'line', line:{{shape:'spline',color:'#38bdf8'}}}},
+  {{x:{json.dumps(e4_labels)}, y:{get_h('High Pre-Vol')}, name:'High Pre-Vol', type:'line', line:{{shape:'spline',color:'#f87171'}}}}
+],L({{title:'High of Day (HOD) Time Distribution',yaxis:{{tickformat:'.0%'}}}}));
+
+// Chart Edge 4 Lows
+Plotly.newPlot('chart_edge4_l',[
+  {{x:{json.dumps(e4_labels)}, y:{get_l('Low Pre-Vol')}, name:'Low Pre-Vol', type:'line', line:{{shape:'spline',color:'#38bdf8'}}}},
+  {{x:{json.dumps(e4_labels)}, y:{get_l('High Pre-Vol')}, name:'High Pre-Vol', type:'line', line:{{shape:'spline',color:'#f87171'}}}}
+],L({{title:'Low of Day (LOD) Time Distribution',yaxis:{{tickformat:'.0%'}}}}));
+"""
+
+html += """
+</script>
+</body>
+</html>
+"""
+
+with open(OUT_FILE, 'w', encoding='utf-8') as f:
+    f.write(html)
+
+print(f"Edge Dashboard generated at: {OUT_FILE}")

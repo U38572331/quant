@@ -1,0 +1,49 @@
+
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+body { background: #020617; color: #f8fafc; font-family: sans-serif; padding: 40px; }
+.card { background: #0f172a; padding: 25px; border-radius: 12px; border: 1px solid #1e293b; margin-bottom: 20px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+.val { font-size: 32px; font-weight: bold; color: #fbbf24; }
+.long-val { color: #34d399; font-size: 28px; font-weight: bold; }
+.short-val { color: #f87171; font-size: 28px; font-weight: bold; }
+.sub { color: #94a3b8; font-size: 13px; text-transform: uppercase; margin-bottom: 5px; }
+img { max-width: 100%; border-radius: 8px; border: 1px solid #1e293b; }
+h2 { border-bottom: 1px solid #1e293b; padding-bottom: 10px; margin-top: 30px; }
+</style></head><body>
+<h1>NQ ORB 終極旗艦儀表板 V4 (Pro Edition)</h1>
+
+<div class="card">
+    <h2>🎯 綜合總覽 (Total Strategy)</h2>
+    <div class="grid" style="margin-top:15px;">
+        <div><div class="sub">總累積獲利</div><div class="val">+84.4 R</div></div>
+        <div><div class="sub">綜合勝率</div><div class="val">53.3%</div></div>
+        <div><div class="sub">獲利因子 (PF)</div><div class="val">1.34</div></div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h2>🟢 多單分析 (Long)</h2>
+        <div class="sub">規則：全線共振 | 目標：1.3R</div>
+        <div class="long-val" style="margin:15px 0;">+44.8 R</div>
+        <div class="sub">勝率：54.9% | PF：1.27 | 次數：450</div>
+    </div>
+    <div class="card">
+        <h2>🔴 空單分析 (Short)</h2>
+        <div class="sub">規則：位階排斥 | 目標：2.5R</div>
+        <div class="short-val" style="margin:15px 0;">+39.6 R</div>
+        <div class="sub">勝率：50.0% | PF：1.48 | 次數：208</div>
+    </div>
+    <div class="card">
+        <h2>⚡ 系統效率 (Expectancy)</h2>
+        <div class="sub">每筆期望收益</div>
+        <div class="val" style="margin:15px 0;">0.13 R</div>
+        <div class="sub">總交易次數：658</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📈 V4 終極數據與風險投影</h2>
+    <img src="file:///C:/Users/user/.gemini/antigravity/scratch/nq_v4_pro_plot.png">
+</div>
+</body></html>
