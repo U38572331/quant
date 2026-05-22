@@ -1,66 +1,98 @@
-# Quantitative Trading Research & Systematic Alpha Portfolio
+# 📈 Quantitative Trading Research & Systematic Alpha Portfolio
 
-Welcome to my quantitative trading research portfolio. This repository showcases my capabilities in systematic strategy development, statistical arbitrage, market microstructure analysis, and full-stack financial dashboard engineering.
+Welcome to my quantitative trading research portfolio. This repository showcases my capabilities in systematic strategy development, statistical arbitrage, market microstructure analysis, and full-stack financial dashboard engineering. It is designed to demonstrate strong engineering practices, statistical rigor, and mathematical modeling to top-tier quantitative trading firms.
 
-## 🚀 Executive Summary
+---
 
-This portfolio encompasses a rigorous approach to quantitative finance, featuring:
-- **Statistical Edge & Hypothesis Testing:** Advanced backtesting of momentum, mean-reversion, and opening range breakout (ORB) strategies with strict adherence to eliminating look-ahead bias and overfitting.
-- **Data Engineering & Auditing:** Automated pipelines for fetching, cleaning, and auditing high-resolution tick and minute-level data from institutional sources like Databento and Yahoo Finance.
-- **Machine Learning Applications:** Implementing regime-switching models (Markov Chains), Kalman filters for noise reduction, and session volatility prediction to dynamically adjust position sizing and profit targets.
-- **Full-Stack Financial Tooling:** Developing interactive, React/Next.js and Flask-based web applications for real-time order flow analysis, options Greek monitoring, and ETF dividend compounding simulations.
+## 🚀 Key Projects & Visual Demonstrations
+
+Here is a deep dive into the core strategies and analytical engines developed in this portfolio:
+
+### 1. NQ Opening Range Breakout (ORB) with VWAP Confluence
+**Description:** A robust 30-minute Opening Range Breakout strategy on Nasdaq futures. Instead of relying on naive price breakouts, this model uses a 4-VWAP Confluence Filter (Current Session VWAP, Prior RTH/ETH VWAPs, and rolling VWAP bands) to dynamically validate breakout momentum. 
+* **Key Features:** Machine learning-based noise reduction, asymmetrical risk-reward optimization (e.g., 1.3R Long / 2.5R Short), and zero look-ahead bias.
+
+<div align="center">
+  <img src="reports/nq_orb_equity_30m.png" width="80%" alt="NQ ORB 30m Equity Curve">
+  <br>
+  <em>Figure 1: Equity curve demonstrating steady, compounding growth of the NQ 30m ORB strategy across a multi-year backtest.</em>
+</div>
+
+<br>
+
+<div align="center">
+  <img src="reports/nq_vwap_confluence_plot.png" width="80%" alt="VWAP Confluence Analysis">
+  <br>
+  <em>Figure 2: VWAP Confluence analysis visualizing trade density and edge realization across varying VWAP bands.</em>
+</div>
+
+---
+
+### 2. Regime-Switching Markov Models & Kalman Filtering
+**Description:** Integration of advanced statistical modeling to adapt to changing market conditions. The Kalman filter mathematically smooths intraday pricing noise to reveal true price velocity, while Markov chains detect high/low volatility regimes to dynamically scale position sizing.
+
+<div align="center">
+  <img src="reports/nq_final_master_plot.png" width="80%" alt="Master Strategy Performance Plot">
+  <br>
+  <em>Figure 3: Master strategy plot combining Kalman-filtered signals with dynamic regime adjustment, significantly reducing drawdown periods.</em>
+</div>
+
+---
+
+### 3. Factor Analysis & Risk Metrics (Monte Carlo Simulations)
+**Description:** A rigorous quant doesn't just look at a single backtest path. This module runs thousands of Monte Carlo simulations to stress-test the equity curve, calculate the probability of ruin, and determine the optimal Kelly criterion for capital allocation.
+
+<div align="center">
+  <img src="reports/nq_monte_carlo.png" width="80%" alt="Monte Carlo Simulation Paths">
+  <br>
+  <em>Figure 4: 1,000-iteration Monte Carlo stress-testing of strategy returns to validate statistical robustness against tail events.</em>
+</div>
+
+<br>
+
+<div align="center">
+  <img src="reports/nq_monthly_heatmap.png" width="80%" alt="Monthly Returns Heatmap">
+  <br>
+  <em>Figure 5: Monthly returns heatmap showing consistent alpha generation across varying macroeconomic environments.</em>
+</div>
+
+---
+
+### 4. Full-Stack Financial Dashboards & Data Engineering
+**Description:** A quant must handle raw data efficiently. This portfolio includes highly optimized Databento tick-level parsers, anomaly detection scripts, and custom React/Flask interactive web dashboards for real-time visualization of order flow and options pricing (Greeks).
+* **ETF Dividend Analyzer:** A Flask/VanillaJS application that simulates long-term DRIP (Dividend Reinvestment) vs. non-DRIP compounding using real-time Yahoo Finance data.
+* **Earnings Volatility Monitor:** Real-time tracking of implied vs. realized volatility.
+
+<div align="center">
+  <img src="reports/portfolio_vs_spx.png" width="80%" alt="Portfolio vs SPX Benchmark">
+  <br>
+  <em>Figure 6: Visualizing the alpha generated by the portfolio strategies compared to the standard S&P 500 benchmark.</em>
+</div>
 
 ---
 
 ## 📁 Repository Architecture
 
-The repository has been structured to reflect a professional quantitative research environment:
+The repository is structured to reflect a professional institutional environment:
 
-### `strategies/`
-Contains core trading logic, signal generation, and historical backtesting engines.
-- **NQ ORB VWAP System:** A robust 30-minute Opening Range Breakout strategy on Nasdaq futures, utilizing 4-VWAP confluence filters and asymmetrical risk-reward optimization.
-- **Kalman Filter Models:** Implementation of Kalman filtering for signal smoothing and noise reduction in intraday trading.
-- **Intraday Momentum:** Scripts replicating and extending SSRN papers on intraday momentum factor premiums.
-
-### `research/`
-Jupyter-style python scripts dedicated to alpha research, factor analysis, and statistical significance testing.
-- **Factor Insights & Monte Carlo:** Scripts running Monte Carlo simulations to stress-test equity curves and calculate probability of ruin.
-- **Risk Threshold Analysis:** Volatility-adjusted stop-loss and take-profit dynamic modeling.
-
-### `data_pipeline/`
-The backbone of the research, ensuring clean and accurate data.
-- **Databento Auditing:** Scripts to reconstruct order books and audit tick-level data for missing gaps.
-- **Data Quality Checks:** Automated scripts identifying anomalies, verifying R-values, and ensuring symbol continuity across 10-year datasets.
-
-### `analytics_and_viz/`
-Tools to translate raw trade logs into actionable insights.
-- **Heatmaps & PnL Distributions:** Generation of monthly return heatmaps, drawdown visualizations, and profit distribution charts.
-- **Plotly Viewers:** Interactive HTML report generators for deep-diving into individual trade executions against underlying OHLCV data.
-
-### `dashboards_and_apps/`
-Production-grade financial web applications and dashboards.
-- **Earnings Volatility Monitor:** A real-time tracker analyzing implied vs. realized volatility around earnings releases.
-- **ETF Dividend Analyzer:** A Flask application simulating long-term DRIP (Dividend Reinvestment Plan) vs. non-DRIP portfolio growth with dynamic Yahoo Finance data integration.
-- **Options Analyzer & 13F Tracker:** Tools for visualizing options flow and tracking institutional holdings.
-
-### `reports/`
-Archived outputs of the research, including HTML visualizations, PNG equity curves, and detailed trade logs for peer review.
-
-### `fun_projects/`
-A collection of personal programming projects (e.g., game clones, AI logic) demonstrating my broader software engineering passion and proficiency outside of quantitative finance.
+* **`strategies/`**: Core trading logic, pine-script prototypes, and python-based historical backtesting engines.
+* **`research/`**: Factor analysis, statistical significance testing, and Jupyter-style exploratory data analysis.
+* **`data_pipeline/`**: Robust data engineering scripts for Databento tick processing, Yahoo Finance fetching, and missing-data imputation.
+* **`analytics_and_viz/`**: Matplotlib/Plotly generators responsible for rendering all the charts and heatmaps shown above.
+* **`reports/`**: Output directory for HTML/PNG backtest reports, trade logs, and performance metrics.
+* **`dashboards_and_apps/`**: Production-ready web applications (React, Next.js, Flask) for interactive financial analysis.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Quantitative Research:** Python, Pandas, NumPy, Scikit-Learn, SciPy, Statsmodels.
-- **Data Sources:** Databento (Tick/BBO data), yfinance, SEC Edgar, CFTC.
-- **Visualization:** Matplotlib, Plotly, Seaborn.
-- **Web Applications:** React, Vite, TailwindCSS, Flask.
-- **Version Control & CI/CD:** Git, GitHub Actions.
+* **Quantitative Research & Math:** Python, Pandas, NumPy, Scikit-Learn, SciPy, Statsmodels.
+* **Data Infrastructure:** Databento (BBO & Tick data), yfinance, Parquet, SEC Edgar API.
+* **Data Visualization:** Matplotlib, Plotly, Seaborn.
+* **Software Engineering:** Object-Oriented Python, React, Flask, Git Version Control.
 
 ---
 
-## 📈 Contact
+## 📬 Contact & Review
 
-Please feel free to explore the code, review the statistical methodologies in the `research/` folder, and test the interactive dashboards in `dashboards_and_apps/`. I am open to discussing the mathematical foundations of these strategies and my software architecture choices in detail.
+Please explore the `.py` files within the `strategies/` and `research/` directories to examine the mathematical foundations and clean code structure. I am highly passionate about systematic trading and welcome the opportunity to discuss my methodology in depth.
